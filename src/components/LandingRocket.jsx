@@ -1,4 +1,4 @@
-import { motion as Motion, useReducedMotion } from "framer-motion";
+/* import { motion as Motion, useReducedMotion } from "framer-motion";
 import rocket from "../assets/cohete-nuevo.png";
 import useIsMobile from "../hooks/useIsMobile";
 
@@ -21,3 +21,4 @@ export default function LandingRocket() {
     </div>
   );
 }
+ */
