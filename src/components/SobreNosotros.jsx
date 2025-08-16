@@ -21,7 +21,11 @@ export default function SobreNosotros() {
 
   {/* Texto: en mobile arriba (order-1), en desktop a la derecha (lg:order-2) */}
   <div className="order-1 lg:order-2 max-w-3xl mx-auto lg:mx-0 text-center lg:text-left">
+
     <TitleWithClouds as="h2" className="text-3xl lg:text-5xl volkhov-bold mb-6 dark:text-white">Sobre Nosotros</TitleWithClouds>
+
+    <TitleWithClouds as="h2" className="text-3xl lg:text-5xl volkhov-bold mb-6">Sobre Nosotros</TitleWithClouds>
+
     <p className="text-lg lg:text-xl volkhov-regular">
       Jet Vets Quisque tincidunt diam eget tempus hendrerit. Suspendisse nibh urna,
       consectetur quis lectus ut, pharetra volutpat nulla. Integer ornare justo mauris,

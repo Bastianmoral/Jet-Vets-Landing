@@ -4,6 +4,7 @@ import Footer from '../components/footer';
 import SobreNosotros from '../components/SobreNosotros';
 import Servicios from '../components/Servicios';
 import FormularioReserva from '../components/Formularioreseva';
+import LandingRocket from '../components/LandingRocket';
 
 export default function Home({ spaceMode, toggleSpaceMode }) {
   return (
@@ -13,6 +14,7 @@ export default function Home({ spaceMode, toggleSpaceMode }) {
       <Servicios />
       <SobreNosotros />
       <FormularioReserva />
+      <LandingRocket />
       <Footer />
     </>
   );

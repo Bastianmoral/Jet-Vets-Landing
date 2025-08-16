@@ -19,11 +19,19 @@ export default function Servicios() {
   const scroll = (dir)=> trackRef.current?.scrollBy({ left: dir * trackRef.current.clientWidth * 0.9, behavior: "smooth" });
 
   return (
+
     <section id="servicios" className="md:bg-[#F6E9DF] bg-[#C5E0D8]/70 dark:bg-transparent min-h-screen flex flex-col justify-start pt-[clamp(1rem,6vh,3rem)] pb-12">
       <div className="text-center mt-[min(4vw)] mb-[min(12vw)] md:mt-[min(0.5vw)] md:mb-[min(2.1vw)]">
         <TitleWithClouds
           as="h2"
           className="text-3xl lg:text-5xl volkhov-bold text-neutralDark/85 dark:text-white"
+
+    <section id="servicios" className="md:bg-[#F6E9DF] bg-[#C5E0D8]/70 min-h-screen flex flex-col justify-start pt-[clamp(1rem,6vh,3rem)] pb-12">
+      <div className="text-center mt-[min(4vw)] mb-[min(12vw)] md:mt-[min(0.5vw)] md:mb-[min(2.1vw)]">
+        <TitleWithClouds
+          as="h2"
+          className="text-3xl lg:text-5xl volkhov-bold text-neutralDark/85"
+
         >
           Nuestros Servicios
         </TitleWithClouds>

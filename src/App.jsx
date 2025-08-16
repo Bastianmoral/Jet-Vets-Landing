@@ -15,6 +15,12 @@ export default function App() {
           <Route path="/" element={<Home spaceMode={spaceMode} toggleSpaceMode={toggleSpaceMode} />} />
         </Routes>
       </div>
+
+    <div id="page" className="min-h-screen w-full overflow-x-clip relative">
+      <StarBackground />
+      <Routes>
+        <Route path="/" element={<Home />} />
+      </Routes>
     </div>
   );
 }
