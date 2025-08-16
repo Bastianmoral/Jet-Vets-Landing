@@ -6,7 +6,7 @@ export default function FormularioReserva() {
   const asunto = searchParams.get('asunto') || '';
 
   return (
-    <section id="reserva" className="min-h-screen bg-[#F6E9DF] flex flex-col items-center justify-center px-4">
+    <section id="reserva" className="min-h-screen bg-[#C5E0D8] md:bg-[#F6E9DF] flex flex-col items-center justify-center px-4">
       <h1 className="text-4xl volkhov-bold mb-8">RESERVA TU HORA</h1>
       <form className="bg-white p-8 rounded-xl shadow-md w-full max-w-md space-y-4">
         <div className="grid-col">

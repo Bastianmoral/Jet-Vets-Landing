@@ -11,8 +11,8 @@ export default function Header() {
   }, [open]);
 
   return (
-    <header className="bg-[#F6E9DF] h-[70px] px-3 py-8 md:px-12 md:py-10 flex justify-between items-center relative">
-      <img src={logo} alt="Jet Vets Logo" className="md:mt-5 h-[90px] md:h-[130px]" />
+    <header className="bg-[#F6E9DF] h-[70px] px-3 py-8 md:px-12 md:py-11 flex justify-between items-center relative">
+      <img src={logo} alt="Jet Vets Logo" className="mt-4 md:mt-1 h-[95px] md:h-[130px]" />
 
       {/* Desktop */}
       <nav className="hidden md:flex md:gap-10 items-center">

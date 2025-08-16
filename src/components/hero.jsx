@@ -1,5 +1,5 @@
 // src/components/Hero.jsx
-import mascotas from '../assets/vet-llegando.png';
+import mascotas from '../assets/Ilustracion2_Clean_500.png';
 import FloatingRocket from './FloatingRocket';
 
 export default function Hero() {
@@ -26,7 +26,7 @@ export default function Hero() {
           <img
             src={mascotas}
             alt="Astronauta Jet Vets"
-            className="w-[250px] md:w-[380px] lg:w-[500px] lg:translate-y-[73px]"
+            className="w-[330px] md:w-[380px] lg:w-[500px] lg:translate-y-[-30px] lg:translate-x-[-60px]"
           />
         </div>
         
