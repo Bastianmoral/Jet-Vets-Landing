@@ -7,10 +7,10 @@ export default function Hero() {
     <section className="relative isolate bg-[#F6E9DF] w-full min-h-screen flex items-center overflow-x-clip">
       {/* Cohete animado */}
       <FloatingRocket />
-      <div className="w-full max-w-[1600px] mx-auto px-6 lg:px-20 grid grid-cols-1 lg:grid-cols-2 gap-12 py-12">
+      <div className="w-full max-w-[1600px] mx-auto px-6 lg:px-20 grid grid-cols-1 md:grid-cols-2 gap-12 py-12">
         
         {/* Texto */}
-        <div className="flex flex-col justify-center items-center lg:items-end text-center lg:text-right gap-6 lg:gap-10">
+        <div className="flex flex-col justify-center items-center md:items-end text-center md:text-right gap-6 md:gap-10">
           <h1 className="volkhov-bold text-[35px] sm:text-[45px] lg:text-[60px] text-neutralDark leading-[1.2] tracking-tight">
             Jet Vets <br />
             <span className="text-primary">un servicio de otra galaxia </span><br />
@@ -22,11 +22,11 @@ export default function Hero() {
         </div>
 
         {/* Imagen */}
-        <div className="flex justify-center lg:justify-end items-center">
+        <div className="flex justify-center md:justify-end items-center">
           <img
             src={mascotas}
             alt="Astronauta Jet Vets"
-            className="w-[330px] md:w-[380px] lg:w-[500px] lg:translate-y-[-30px] lg:translate-x-[-60px]"
+            className="w-[330px] md:w-[380px] lg:w-[500px] md:translate-y-[-30px] md:translate-x-[-60px]"
           />
         </div>
         
