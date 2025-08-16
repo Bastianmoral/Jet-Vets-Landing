@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import logo from "../assets/logo.png";
 
-export default function Header() {
+export default function Header({ spaceMode, toggleSpaceMode }) {
   const [open, setOpen] = useState(false);
 
   // Bloquea scroll del body cuando el menú está abierto (mejor UX)
@@ -11,19 +11,25 @@ export default function Header() {
   }, [open]);
 
   return (
-    <header className="bg-[#F6E9DF] h-[70px] px-3 py-8 md:px-12 md:py-11 flex justify-between items-center relative">
+    <header className="bg-[#F6E9DF] dark:bg-transparent dark:text-white h-[70px] px-3 py-8 md:px-12 md:py-11 flex justify-between items-center relative">
       <img src={logo} alt="Jet Vets Logo" className="mt-4 md:mt-1 h-[95px] md:h-[130px]" />
 
       {/* Desktop */}
       <nav className="hidden md:flex md:gap-10 items-center">
-        <a href="#nosotros" className="text-primary font-medium">Sobre Nosotros</a>
-        <a href="#servicios" className="text-primary font-medium">Servicios</a>
+        <a href="#nosotros" className="text-primary dark:text-white font-medium">Sobre Nosotros</a>
+        <a href="#servicios" className="text-primary dark:text-white font-medium">Servicios</a>
         <a href="https://wa.me/34666666666" target="_blank" rel="noopener noreferrer">
           <img src="src/assets/icons8-whatsapp.svg" alt="WhatsApp" className="w-10 h-10" />
         </a>
         <a href="https://instagram.com/jetvets" target="_blank" rel="noopener noreferrer">
           <img src="src/assets/icons8-instagram.svg" alt="Instagram" className="w-8 h-10" />
         </a>
+        <button
+          onClick={toggleSpaceMode}
+          className="bg-[#4E6B3B] text-white px-4 py-2 rounded-lg text-center"
+        >
+          {spaceMode ? 'Modo Claro' : 'Modo Espacial'}
+        </button>
         <a href="#reserva" className="bg-[#5c7c4d] text-white px-4 py-2 rounded-lg text-center">
           Reservar tu hora
         </a>
@@ -54,14 +60,14 @@ export default function Header() {
       {/* Panel lateral derecho con slide-in */}
       <div
         className={`md:hidden fixed top-20 right-0 h-screen w-[47vw] max-w-[380px]
-                    bg-beige/90 z-50 pt-[20px] pb-8 px-6 shadow-2xl rounded-l-2xl
+                    bg-beige/90 dark:bg-neutral-900/90 z-50 pt-[20px] pb-8 px-6 shadow-2xl rounded-l-2xl
                     transition-transform duration-300
                     ${open ? "translate-x-0" : "translate-x-full"}`}
       >
         <nav className="flex flex-col items-end gap-6">
-          <img src={logo} alt="Jet Vets Logo" className="h-[100px] md:h-[130px] mb-2"/>   
-          <a href="#nosotros" className="text-primary font-medium" onClick={() => setOpen(false)}>Sobre Nosotros</a>
-          <a href="#servicios" className="text-primary font-medium" onClick={() => setOpen(false)}>Servicios</a>
+          <img src={logo} alt="Jet Vets Logo" className="h-[100px] md:h-[130px] mb-2"/>
+          <a href="#nosotros" className="text-primary dark:text-white font-medium" onClick={() => setOpen(false)}>Sobre Nosotros</a>
+          <a href="#servicios" className="text-primary dark:text-white font-medium" onClick={() => setOpen(false)}>Servicios</a>
           <div className="flex items-center gap-4">
             <a href="https://wa.me/34666666666" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>
               <img src="src/assets/icons8-whatsapp.svg" alt="WhatsApp" className="w-9 h-9" />
@@ -70,6 +76,12 @@ export default function Header() {
               <img src="src/assets/icons8-instagram.svg" alt="Instagram" className="w-8 h-8" />
             </a>
           </div>
+          <button
+            onClick={() => { toggleSpaceMode(); setOpen(false); }}
+            className="bg-[#4E6B3B] text-white px-4 py-2 rounded-lg"
+          >
+            {spaceMode ? 'Modo Claro' : 'Modo Espacial'}
+          </button>
           <a
             href="#reserva"
             onClick={() => setOpen(false)}
