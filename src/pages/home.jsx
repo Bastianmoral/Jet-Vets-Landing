@@ -5,10 +5,10 @@ import SobreNosotros from '../components/SobreNosotros';
 import Servicios from '../components/Servicios';
 import FormularioReserva from '../components/Formularioreseva';
 
-export default function Home() {
+export default function Home({ spaceMode, toggleSpaceMode }) {
   return (
     <>
-      <Header />
+      <Header spaceMode={spaceMode} toggleSpaceMode={toggleSpaceMode} />
       <Hero />
       <Servicios />
       <SobreNosotros />

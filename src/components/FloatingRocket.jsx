@@ -1,4 +1,4 @@
-import { motion, useAnimation, useReducedMotion } from "framer-motion";
+import { motion as Motion, useAnimation, useReducedMotion } from "framer-motion";
 import { useEffect, useMemo } from "react";
 import rocket from "../assets/cohete-nuevo.png";
 import useIsMobile from "../hooks/useIsMobile";
@@ -56,7 +56,7 @@ export default function FloatingRocket() {
   }, [controls, target, prefersReduced]);
 
   return (
-    <motion.div
+    <Motion.div
       // Arranca fuera de pantalla para “llegar”
       initial={{ x: "-40vw", y: -10, opacity: 0, rotate: 0 }}
       animate={controls}
@@ -71,6 +71,6 @@ export default function FloatingRocket() {
         className="select-none opacity-100 w-28 md:w-60"
         draggable={false}
       />
-    </motion.div>
+    </Motion.div>
   );
 }

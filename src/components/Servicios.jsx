@@ -1,6 +1,7 @@
 // Servicios.jsx
 import { useRef } from "react";
 import ServicioCard from "./ServicioCard";
+import TitleWithClouds from "./TitleWithClouds";
 import { FaStethoscope, FaSyringe, FaIdBadge, FaPassport, FaFlask, FaDog, FaAmbulance } from "react-icons/fa";
 
 const servicios = [
@@ -17,9 +18,16 @@ export default function Servicios() {
   const trackRef = useRef(null);
   const scroll = (dir)=> trackRef.current?.scrollBy({ left: dir * trackRef.current.clientWidth * 0.9, behavior: "smooth" });
 
-  return (/* bg-[#C5E0D8]/70 */
-    <section id="servicios" className="md:bg-[#F6E9DF] bg-[#C5E0D8]/70 min-h-screen flex flex-col justify-start pt-[clamp(1rem,6vh,3rem)] pb-12">
-      <h2 className="text-center text-3xl lg:text-5xl volkhov-bold text-neutralDark/85 mt-[min(4vw)] mb-[min(12vw)]  md:mt-[min(0.5vw)] md:mb-[min(2.1vw)]">Nuestros Servicios</h2>
+  return (
+    <section id="servicios" className="md:bg-[#F6E9DF] bg-[#C5E0D8]/70 dark:bg-transparent min-h-screen flex flex-col justify-start pt-[clamp(1rem,6vh,3rem)] pb-12">
+      <div className="text-center mt-[min(4vw)] mb-[min(12vw)] md:mt-[min(0.5vw)] md:mb-[min(2.1vw)]">
+        <TitleWithClouds
+          as="h2"
+          className="text-3xl lg:text-5xl volkhov-bold text-neutralDark/85 dark:text-white"
+        >
+          Nuestros Servicios
+        </TitleWithClouds>
+      </div>
 
       {/* MOBILE */}
       <div className="relative md:hidden">
@@ -32,9 +40,7 @@ export default function Servicios() {
             <ServicioCard
               key={s.titulo}
               {...s}
-              // Más grande: ocupa ~94vw con tope, alto lo controla la card (h-[360px])
               className="shrink-0 snap-center w-[min(94vw,560px)] mx-auto"
-              // Si quieres “peek”: cambia a w-[min(88vw,520px)]
             />
           ))}
         </div>
@@ -48,28 +54,28 @@ export default function Servicios() {
 
       {/* DESKTOP */}
       <div className="hidden md:block px-4">
-  {/* Fila superior: 4 columnas fijas */}
-  <div
-    className="grid gap-8 mx-auto justify-center"
-    style={{ gridTemplateColumns: "repeat(4, 300px)" }} // ajusta 300px al ancho de tu card
-  >
-    {servicios.slice(0, 4).map((s) => (
-      <ServicioCard key={s.titulo} {...s} />
-    ))}
-  </div>
+        {/* Fila superior: 4 columnas fijas */}
+        <div
+          className="grid gap-8 mx-auto justify-center"
+          style={{ gridTemplateColumns: "repeat(4, 300px)" }} // ajusta 300px al ancho de tu card
+        >
+          {servicios.slice(0, 4).map((s) => (
+            <ServicioCard key={s.titulo} {...s} />
+          ))}
+        </div>
 
-  {/* Fila inferior: bloque centrado con 3 columnas */}
-  <div className="mt-8 flex justify-center">
-    <div
-      className="grid gap-8"
-      style={{ gridTemplateColumns: "repeat(3, 300px)" }} // mismo ancho que arriba
-    >
-      {servicios.slice(4).map((s) => (
-        <ServicioCard key={s.titulo} {...s} />
-      ))}
-    </div>
-  </div>
-</div>
+        {/* Fila inferior: bloque centrado con 3 columnas */}
+        <div className="mt-8 flex justify-center">
+          <div
+            className="grid gap-8"
+            style={{ gridTemplateColumns: "repeat(3, 300px)" }} // mismo ancho que arriba
+          >
+            {servicios.slice(4).map((s) => (
+              <ServicioCard key={s.titulo} {...s} />
+            ))}
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
