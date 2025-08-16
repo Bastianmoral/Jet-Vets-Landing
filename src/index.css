@@ -81,6 +81,15 @@ button:focus-visible {
   .animate-float {
     animation: float 3s ease-in-out infinite;
   }
+
+  @keyframes twinkle {
+    0%,100% { opacity: 0.2; }
+    50% { opacity: 1; }
+  }
+
+  .animate-twinkle {
+    animation: twinkle 2s infinite ease-in-out;
+  }
 }
 
 /* Seguridad de layout */

@@ -1,5 +1,6 @@
 // src/components/FormularioReserva.jsx
 import { useSearchParams } from 'react-router-dom';
+import TitleWithClouds from './TitleWithClouds';
 
 export default function FormularioReserva() {
   const [searchParams] = useSearchParams();
@@ -7,7 +8,7 @@ export default function FormularioReserva() {
 
   return (
     <section id="reserva" className="min-h-screen bg-[#C5E0D8] md:bg-[#F6E9DF] flex flex-col items-center justify-center px-4">
-      <h1 className="text-4xl volkhov-bold mb-8">RESERVA TU HORA</h1>
+      <div className="mb-8"><TitleWithClouds as="h1" className="text-4xl volkhov-bold text-center">RESERVA TU HORA</TitleWithClouds></div>
       <form className="bg-white p-8 rounded-xl shadow-md w-full max-w-md space-y-4">
         <div className="grid-col">
           <label className="text-sm font-semibold mb-1">Especie</label>
