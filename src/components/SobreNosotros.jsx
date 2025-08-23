@@ -5,7 +5,7 @@ export default function SobreNosotros() {
   return (
     <section
       id="nosotros"
-      className="min-h-screen px-6 py-16 bg-[#F6E9DF] md:bg-[#F6E9DF] dark:bg-transparent text-neutralDark dark:text-white"
+      className="min-h-screen px-6 py-16 bg-[#B6BE9C] md:bg-[#B6BE9C] dark:bg-transparent text-neutralDark dark:text-white"
     >
       {/* Contenedor responsivo */}
       <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 items-center gap-10">

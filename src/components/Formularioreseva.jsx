@@ -9,7 +9,7 @@ export default function FormularioReserva() {
   return (
     <section
       id="reserva"
-      className="min-h-screen bg-[#C5E0D8] md:bg-[#F6E9DF] dark:bg-transparent flex flex-col items-center justify-center px-4"
+      className="min-h-screen bg-[#B6BE9C]/70 md:bg-[#B6BE9C] dark:bg-transparent flex flex-col items-center justify-center px-4"
     >
       <div className="mb-8">
         <TitleWithClouds as="h1" className="text-4xl volkhov-bold text-center dark:text-white">

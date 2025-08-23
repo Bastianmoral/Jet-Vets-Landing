@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import logo from "../assets/logo.png";
+import whatsappIcon from "../assets/icons8-whatsapp.svg";
+import instagramIcon from "../assets/icons8-instagram.svg";
 
 export default function Header({ spaceMode, toggleSpaceMode }) {
   const [open, setOpen] = useState(false);
@@ -11,19 +13,41 @@ export default function Header({ spaceMode, toggleSpaceMode }) {
   }, [open]);
 
   return (
-    <header className="bg-[#F6E9DF] dark:bg-transparent dark:text-white h-[70px] px-3 py-8 md:px-12 md:py-11 flex justify-between items-center relative">
-      <img src={logo} alt="Jet Vets Logo" className="mt-4 md:mt-1 h-[95px] md:h-[130px]" />
+    <header className="bg-[#B6BE9C] dark:bg-transparent dark:text-white h-[70px] px-3 md:px-12 flex justify-between items-center relative">
+        <img src={logo} alt="Jet Vets Logo" className="h-full" />
 
       {/* Desktop */}
       <nav className="hidden md:flex md:gap-10 items-center">
-        <a href="#nosotros" className="text-primary dark:text-white font-medium">Sobre Nosotros</a>
-        <a href="#servicios" className="text-primary dark:text-white font-medium">Servicios</a>
-        <a href="https://wa.me/34666666666" target="_blank" rel="noopener noreferrer">
-          <img src="src/assets/icons8-whatsapp.svg" alt="WhatsApp" className="w-10 h-10" />
-        </a>
-        <a href="https://instagram.com/jetvets" target="_blank" rel="noopener noreferrer">
-          <img src="src/assets/icons8-instagram.svg" alt="Instagram" className="w-8 h-10" />
-        </a>
+        <a
+  href="#nosotros"
+  onClick={(e) => {
+    e.preventDefault(); // evita el salto brusco por defecto
+    document.getElementById("nosotros")?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }}
+  className="text-primary dark:text-white font-medium cursor-pointer"
+>
+  Sobre Nosotros
+</a>
+        <a
+  href="#servicios"
+  onClick={(e) => {
+    e.preventDefault(); // evita el salto brusco por defecto
+    document.getElementById("servicios")?.scrollIntoView({ 
+      behavior: "smooth",
+    });
+  }}
+  className="text-primary dark:text-white font-medium cursor-pointer"
+>
+  Servicios 
+</a>
+          <a href="https://wa.me/34666666666" target="_blank" rel="noopener noreferrer">
+            <img src={whatsappIcon} alt="WhatsApp" className="block w-10 h-10" />
+          </a>
+          <a href="https://instagram.com/jetvets" target="_blank" rel="noopener noreferrer">
+            <img src={instagramIcon} alt="Instagram" className="block w-10 h-10" />
+          </a>
         <button
           onClick={toggleSpaceMode} 
           className="bg-[#5c7c4d] text-white px-4 py-2 rounded-lg text-center"
@@ -70,10 +94,10 @@ export default function Header({ spaceMode, toggleSpaceMode }) {
           <a href="#servicios" className="text-primary dark:text-white font-medium" onClick={() => setOpen(false)}>Servicios</a>
           <div className="flex items-center gap-4">
             <a href="https://wa.me/34666666666" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>
-              <img src="src/assets/icons8-whatsapp.svg" alt="WhatsApp" className="w-9 h-9" />
+              <img src={whatsappIcon} alt="WhatsApp" className="w-9 h-9" />
             </a>
             <a href="https://instagram.com/jetvets" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>
-              <img src="src/assets/icons8-instagram.svg" alt="Instagram" className="w-8 h-8" />
+              <img src={instagramIcon} alt="Instagram" className="w-8 h-8" />
             </a>
           </div>
           <button

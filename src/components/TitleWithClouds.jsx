@@ -12,7 +12,7 @@ export default function TitleWithClouds({ children, as = "h2", className = "" })
         src={cloud1}
         alt=""
         aria-hidden="true"
-        className="hidden sm:block absolute -top-10 -left-20 w-28 pointer-events-none select-none"
+        className="hidden dark:block absolute -top-10 -left-20 w-16 sm:w-28 pointer-events-none select-none"
       />
 
       {/* Nube derecha */}
@@ -20,7 +20,7 @@ export default function TitleWithClouds({ children, as = "h2", className = "" })
         src={cloud2}
         alt=""
         aria-hidden="true"
-        className="hidden sm:block absolute -bottom-6 -right-20 w-28 pointer-events-none select-none"
+        className="hidden dark:block absolute -bottom-6 -right-20 w-16 sm:w-28 pointer-events-none select-none"
       />
     </div>
   );

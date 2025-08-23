@@ -25,7 +25,7 @@ export default function Servicios() {
   return (
     <section
       id="servicios"
-      className="md:bg-[#F6E9DF] bg-[#C5E0D8]/70 dark:bg-transparent min-h-screen flex flex-col justify-start pt-[clamp(1rem,6vh,3rem)] pb-12"
+      className="md:bg-[#B6BE9C] bg-[#B6BE9C]/70 dark:bg-transparent min-h-screen flex flex-col justify-start pt-[clamp(1rem,6vh,3rem)] pb-12"
     >
       {/* Título */}
       <div className="text-center mt-[min(4vw)] mb-[min(12vw)] md:mt-[min(0.5vw)] md:mb-[min(2.1vw)]">

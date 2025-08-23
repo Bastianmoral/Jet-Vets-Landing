@@ -15,7 +15,7 @@ export default function StarBackground({ count = 40 }) {
   }, [count]);
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-40 mix-blend-screen">
+    <div className="pointer-events-none fixed inset-2 z-40 mix-blend-screen">
       {stars.map((style, i) => (
         <span
           key={i}

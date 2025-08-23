@@ -23,10 +23,19 @@ export default function ServicioCard({ titulo, descripcion, icono, className="" 
         {/* Reverso */}
         <div className="absolute inset-0 rounded-2xl shadow-[0_12px_28px_rgba(0,0,0,.18)] bg-[#C5E0D8] text-neutralDark [transform:rotateY(180deg)] [backface-visibility:hidden] p-5 flex flex-col items-center justify-center gap-3">
           <p className="text-sm text-center">{descripcion}</p>
-          <a href={`/reserva?asunto=${encodeURIComponent(titulo)}`}
-             className="bg-[#41658A] text-white px-4 py-2 rounded-lg hover:opacity-90">
+          <button
+            onClick={() => {
+              const params = new URLSearchParams(window.location.search);
+              params.set('asunto', titulo);
+              const newUrl = `${window.location.pathname}?${params.toString()}#reserva`;
+              window.history.pushState(null, '', newUrl);
+              window.dispatchEvent(new PopStateEvent('popstate'));
+              document.getElementById('reserva')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="bg-[#41658A] text-white px-4 py-2 rounded-lg hover:opacity-90"
+          >
             Reservar Hora
-          </a>
+          </button>
         </div>
       </div>
     </div>

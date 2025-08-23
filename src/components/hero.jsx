@@ -4,10 +4,10 @@ import FloatingRocket from './FloatingRocket';
 
 export default function Hero() {
   return (
-    <section className="relative isolate bg-[#F6E9DF] dark:bg-transparent w-full min-h-screen flex items-center overflow-x-clip">
+    <section className="relative isolate bg-[#B6BE9C] dark:bg-transparent w-full min-h-screen flex items-center overflow-x-clip">
       {/* Cohete animado (al fondo) */}
       <FloatingRocket />
-
+ 
       {/* Contenido */}
       <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6 lg:px-20 grid grid-cols-1 md:grid-cols-2 gap-12 py-12">
 

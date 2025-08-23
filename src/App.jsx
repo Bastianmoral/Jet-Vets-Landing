@@ -10,10 +10,10 @@ export default function App() {
 
   return (
     <div id="page" className={spaceMode ? 'dark' : ''}>
-      {/* Fondo dinámico */}
-      {spaceMode && <StarBackground />}
-
       <div className="min-h-screen w-full overflow-x-clip relative bg-white text-neutralDark dark:bg-neutral-900 dark:text-white">
+        {/* Fondo dinámico */}
+        {spaceMode && <StarBackground />}
+
         <Routes>
           <Route
             path="/jetvet"
