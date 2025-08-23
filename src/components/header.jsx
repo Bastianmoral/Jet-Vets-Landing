@@ -25,8 +25,8 @@ export default function Header({ spaceMode, toggleSpaceMode }) {
           <img src="src/assets/icons8-instagram.svg" alt="Instagram" className="w-8 h-10" />
         </a>
         <button
-          onClick={toggleSpaceMode}
-          className="bg-[#4E6B3B] text-white px-4 py-2 rounded-lg text-center"
+          onClick={toggleSpaceMode} 
+          className="bg-[#5c7c4d] text-white px-4 py-2 rounded-lg text-center"
         >
           {spaceMode ? 'Modo Claro' : 'Modo Espacial'}
         </button>
@@ -78,7 +78,7 @@ export default function Header({ spaceMode, toggleSpaceMode }) {
           </div>
           <button
             onClick={() => { toggleSpaceMode(); setOpen(false); }}
-            className="bg-[#4E6B3B] text-white px-4 py-2 rounded-lg"
+            className="bg-[#5c7c4d] text-white px-4 py-2 rounded-lg"
           >
             {spaceMode ? 'Modo Claro' : 'Modo Espacial'}
           </button>

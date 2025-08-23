@@ -16,7 +16,7 @@ export default function App() {
       <div className="min-h-screen w-full overflow-x-clip relative bg-white text-neutralDark dark:bg-neutral-900 dark:text-white">
         <Routes>
           <Route
-            path="/"
+            path="/jetvet"
             element={<Home spaceMode={spaceMode} toggleSpaceMode={toggleSpaceMode} />}
           />
         </Routes>
