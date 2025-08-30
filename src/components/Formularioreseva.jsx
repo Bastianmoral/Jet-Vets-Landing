@@ -1,10 +1,37 @@
 // src/components/FormularioReserva.jsx
 import { useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
 import TitleWithClouds from './TitleWithClouds';
 
 export default function FormularioReserva() {
   const [searchParams] = useSearchParams();
   const asunto = searchParams.get('asunto') || '';
+  const [status, setStatus] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    try {
+      const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id: import.meta.env.VITE_EMAILJS_SERVICE_ID,
+          template_id: import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+          user_id: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+          template_params: Object.fromEntries(formData.entries()),
+        }),
+      });
+      if (res.ok) {
+        setStatus('success');
+        e.target.reset();
+      } else {
+        setStatus('error');
+      }
+    } catch {
+      setStatus('error');
+    }
+  };
 
   return (
     <section
@@ -17,7 +44,7 @@ export default function FormularioReserva() {
         </TitleWithClouds>
       </div>
 
-      <form className="bg-white dark:bg-neutral-800 dark:text-white p-8 rounded-xl shadow-md w-full max-w-md space-y-4">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-neutral-800 dark:text-white p-8 rounded-xl shadow-md w-full max-w-md space-y-4">
 
         {/* Fila 1: Especie / Edad */}
         <div className="grid grid-cols-2 gap-4">
@@ -97,6 +124,12 @@ export default function FormularioReserva() {
           Reservar Hora
         </button>
       </form>
+      {status === 'success' && (
+        <p className="mt-4 text-green-600">Solicitud enviada</p>
+      )}
+      {status === 'error' && (
+        <p className="mt-4 text-red-600">Hubo un problema, inténtalo más tarde</p>
+      )}
     </section>
   );
 }

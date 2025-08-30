@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FaSun, FaMoon } from "react-icons/fa";
 import logo from "../assets/logo.png";
 
 export default function Header({ spaceMode, toggleSpaceMode }) {
@@ -25,10 +26,11 @@ export default function Header({ spaceMode, toggleSpaceMode }) {
           <img src="src/assets/icons8-instagram.svg" alt="Instagram" className="w-8 h-10" />
         </a>
         <button
-          onClick={toggleSpaceMode} 
-          className="bg-[#5c7c4d] text-white px-4 py-2 rounded-lg text-center"
+          onClick={toggleSpaceMode}
+          aria-label={spaceMode ? 'Modo Claro' : 'Modo Espacial'}
+          className="bg-[#5c7c4d] text-white rounded-lg w-10 h-10 grid place-items-center"
         >
-          {spaceMode ? 'Modo Claro' : 'Modo Espacial'}
+          {spaceMode ? <FaSun /> : <FaMoon />}
         </button>
         <a href="#reserva" className="bg-[#5c7c4d] text-white px-4 py-2 rounded-lg text-center">
           Reservar tu hora
@@ -78,9 +80,10 @@ export default function Header({ spaceMode, toggleSpaceMode }) {
           </div>
           <button
             onClick={() => { toggleSpaceMode(); setOpen(false); }}
-            className="bg-[#5c7c4d] text-white px-4 py-2 rounded-lg"
+            aria-label={spaceMode ? 'Modo Claro' : 'Modo Espacial'}
+            className="bg-[#5c7c4d] text-white rounded-lg w-10 h-10 grid place-items-center"
           >
-            {spaceMode ? 'Modo Claro' : 'Modo Espacial'}
+            {spaceMode ? <FaSun /> : <FaMoon />}
           </button>
           <a
             href="#reserva"

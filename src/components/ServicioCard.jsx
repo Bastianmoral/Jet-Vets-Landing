@@ -1,8 +1,7 @@
-// ServicioCard.jsx
 import { useState } from "react";
 import useIsMobile from "../hooks/useIsMobile";
 
-export default function ServicioCard({ titulo, descripcion, icono, className="" }) {
+export default function ServicioCard({ titulo, icono, className="" }) {
   const [flipped, setFlipped] = useState(false);
   const isMobile = useIsMobile();
   const hover = (v)=>{ if (!isMobile) setFlipped(v); };
@@ -22,10 +21,21 @@ export default function ServicioCard({ titulo, descripcion, icono, className="" 
 
         {/* Reverso */}
         <div className="absolute inset-0 rounded-2xl shadow-[0_12px_28px_rgba(0,0,0,.18)] bg-[#C5E0D8] text-neutralDark [transform:rotateY(180deg)] [backface-visibility:hidden] p-5 flex flex-col items-center justify-center gap-3">
-          <p className="text-sm text-center">{descripcion}</p>
-          <a href={`/reserva?asunto=${encodeURIComponent(titulo)}`}
-             className="bg-[#41658A] text-white px-4 py-2 rounded-lg hover:opacity-90">
+          {icono ? <div className="text-5xl mb-2">{icono}</div> : null}
+          <a
+            href={`/reserva?asunto=${encodeURIComponent(titulo)}`}
+            className="bg-[#41658A] text-white px-4 py-2 rounded-lg hover:opacity-90"
+          >
             Reservar Hora
+          </a>
+          <a
+            href={`https://wa.me/34666666666?text=${encodeURIComponent(`Hola, estoy interesado en ${titulo}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-[#25D366] text-white px-4 py-2 rounded-lg hover:opacity-90 flex items-center gap-2"
+          >
+            <img src="src/assets/icons8-whatsapp.svg" alt="WhatsApp" className="w-5 h-5" />
+            WhatsApp
           </a>
         </div>
       </div>
