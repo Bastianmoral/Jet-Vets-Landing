@@ -2,16 +2,28 @@
 import { useRef } from "react";
 import ServicioCard from "./ServicioCard";
 import TitleWithClouds from "./TitleWithClouds";
-import { FaStethoscope, FaSyringe, FaIdBadge, FaPassport, FaFlask, FaDog, FaAmbulance } from "react-icons/fa";
+import {
+  FaStethoscope,
+  FaSyringe,
+  FaIdBadge,
+  FaPassport,
+  FaFlask,
+  FaDog,
+  FaBrain,
+  FaXRay,
+} from "react-icons/fa";
+import { GiBrokenBone } from "react-icons/gi";
 
 const servicios = [
-  { titulo: "Consultas a Domicilio", descripcion: "…", icono: <FaStethoscope /> },
-  { titulo: "Vacunación y Desparasitación", descripcion: "…", icono: <FaSyringe /> },
-  { titulo: "Identificación de Animales", descripcion: "…", icono: <FaIdBadge /> },
-  { titulo: "Certificados de Salud y Viaje", descripcion: "…", icono: <FaPassport /> },
-  { titulo: "Revisiones y Análisis Clínicos", descripcion: "…", icono: <FaFlask /> },
-  { titulo: "Atención Geriátrica", descripcion: "…", icono: <FaDog /> },
-  { titulo: "Servicio de Urgencia", descripcion: "…", icono: <FaAmbulance /> },
+  { titulo: "Medicina general", icono: <FaStethoscope /> },
+  { titulo: "Traumatología", icono: <GiBrokenBone /> },
+  { titulo: "Neurología", icono: <FaBrain /> },
+  { titulo: "Identificación de animales", icono: <FaIdBadge /> },
+  { titulo: "Vacunación y desparasitación", icono: <FaSyringe /> },
+  { titulo: "Análisis clínicos", icono: <FaFlask /> },
+  { titulo: "Diagnóstico por imagen (Radiografía y ecografía)", icono: <FaXRay /> },
+  { titulo: "Certificados de salud y de viaje", icono: <FaPassport /> },
+  { titulo: "Atención geriátrica", icono: <FaDog /> },
 ];
 
 export default function Servicios() {
@@ -70,28 +82,15 @@ export default function Servicios() {
         </button>
       </div>
 
-      {/* DESKTOP: grillas 4 + 3 */}
+      {/* DESKTOP: grilla 3x3 */}
       <div className="hidden md:block px-4">
-        {/* Fila superior: 4 columnas fijas */}
         <div
           className="grid gap-8 mx-auto justify-center"
-          style={{ gridTemplateColumns: "repeat(4, 300px)" }}
+          style={{ gridTemplateColumns: "repeat(3, 300px)" }}
         >
-          {servicios.slice(0, 4).map((s) => (
+          {servicios.map((s) => (
             <ServicioCard key={s.titulo} {...s} />
           ))}
-        </div>
-
-        {/* Fila inferior: 3 columnas centradas */}
-        <div className="mt-8 flex justify-center">
-          <div
-            className="grid gap-8"
-            style={{ gridTemplateColumns: "repeat(3, 300px)" }}
-          >
-            {servicios.slice(4).map((s) => (
-              <ServicioCard key={s.titulo} {...s} />
-            ))}
-          </div>
         </div>
       </div>
     </section>

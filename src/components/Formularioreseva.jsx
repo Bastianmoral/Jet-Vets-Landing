@@ -1,10 +1,28 @@
 // src/components/FormularioReserva.jsx
+import { useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import TitleWithClouds from './TitleWithClouds';
 
 export default function FormularioReserva() {
   const [searchParams] = useSearchParams();
   const asunto = searchParams.get('asunto') || '';
+  const formRef = useRef(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const form = formRef.current;
+    if (!window.emailjs) return;
+    window.emailjs
+      .sendForm('SERVICE_ID', 'TEMPLATE_ID', form)
+      .then(() => {
+        // TODO: revisar conflictos de horario antes de crear eventos en Google Calendar
+        form.reset();
+        alert('Solicitud enviada');
+      })
+      .catch((err) => {
+        console.error('EmailJS error', err);
+      });
+  };
 
   return (
     <section
@@ -17,7 +35,7 @@ export default function FormularioReserva() {
         </TitleWithClouds>
       </div>
 
-      <form className="bg-white dark:bg-neutral-800 dark:text-white p-8 rounded-xl shadow-md w-full max-w-md space-y-4">
+      <form ref={formRef} onSubmit={handleSubmit} className="bg-white dark:bg-neutral-800 dark:text-white p-8 rounded-xl shadow-md w-full max-w-md space-y-4">
 
         {/* Fila 1: Especie / Edad */}
         <div className="grid grid-cols-2 gap-4">
