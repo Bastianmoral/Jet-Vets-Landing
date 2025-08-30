@@ -1,8 +1,9 @@
 // ServicioCard.jsx
 import { useState } from "react";
+import { FaWhatsapp } from "react-icons/fa";
 import useIsMobile from "../hooks/useIsMobile";
 
-export default function ServicioCard({ titulo, descripcion, icono, className="" }) {
+export default function ServicioCard({ titulo, icono, className="" }) {
   const [flipped, setFlipped] = useState(false);
   const isMobile = useIsMobile();
   const hover = (v)=>{ if (!isMobile) setFlipped(v); };
@@ -21,21 +22,34 @@ export default function ServicioCard({ titulo, descripcion, icono, className="" 
         </div>
 
         {/* Reverso */}
-        <div className="absolute inset-0 rounded-2xl shadow-[0_12px_28px_rgba(0,0,0,.18)] bg-[#C5E0D8] text-neutralDark [transform:rotateY(180deg)] [backface-visibility:hidden] p-5 flex flex-col items-center justify-center gap-3">
-          <p className="text-sm text-center">{descripcion}</p>
-          <button
-            onClick={() => {
-              const params = new URLSearchParams(window.location.search);
-              params.set('asunto', titulo);
-              const newUrl = `${window.location.pathname}?${params.toString()}#reserva`;
-              window.history.pushState(null, '', newUrl);
-              window.dispatchEvent(new PopStateEvent('popstate'));
-              document.getElementById('reserva')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="bg-[#41658A] text-white px-4 py-2 rounded-lg hover:opacity-90"
-          >
-            Reservar Hora
-          </button>
+        <div className="absolute inset-0 rounded-2xl shadow-[0_12px_28px_rgba(0,0,0,.18)] bg-[#C5E0D8] text-neutralDark [transform:rotateY(180deg)] [backface-visibility:hidden] p-5 flex flex-col items-center justify-center gap-4">
+          {icono ? <div className="text-5xl text-primary">{icono}</div> : null}
+          <div className="flex gap-3">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                const params = new URLSearchParams(window.location.search);
+                params.set('asunto', titulo);
+                const newUrl = `${window.location.pathname}?${params.toString()}#reserva`;
+                window.history.pushState(null, '', newUrl);
+                window.dispatchEvent(new PopStateEvent('popstate'));
+                document.getElementById('reserva')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="bg-[#41658A] text-white px-4 py-2 rounded-lg hover:opacity-90"
+            >
+              Reservar Hora
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                const message = encodeURIComponent(`Hola, estoy interesado en el servicio de ${titulo}.`);
+                window.open(`https://wa.me/34666666666?text=${message}`, '_blank');
+              }}
+              className="bg-[#25D366] text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:opacity-90"
+            >
+              <FaWhatsapp />
+            </button>
+          </div>
         </div>
       </div>
     </div>
