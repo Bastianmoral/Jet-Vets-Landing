@@ -11,7 +11,7 @@ export default function FloatingRocket() {
   // Posición objetivo expresada en unidades relativas (no medimos window)
   const target = useMemo(() => {
     return isMobile
-      ? { x: "35vw", y: -10, rot: 2 }   // móvil: más cerca del centro
+      ? { x: "35vw", y: -50, rot: 2 }   // móvil: más cerca del centro
       : { x: "42vw", y: 30, rot: 4 };  // desktop: a la derecha del texto
   }, [isMobile]);
 

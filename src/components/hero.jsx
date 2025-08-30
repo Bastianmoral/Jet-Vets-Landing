@@ -12,15 +12,22 @@ export default function Hero() {
       <div className="relative z-10 w-full max-w-[1600px] mx-auto px-6 lg:px-20 grid grid-cols-1 md:grid-cols-2 gap-12 py-12">
 
         {/* Texto */}
-        <div className="flex flex-col justify-center items-center md:items-end text-center md:text-right gap-6 md:gap-10">
-          <h1 className="volkhov-bold text-[35px] sm:text-[45px] lg:text-[60px] text-neutralDark dark:text-white leading-[1.2] tracking-tight">
+        <div className="flex flex-col justify-center items-center md:items-end text-center md:text-right gap-2 md:gap-10">
+          <h1 className="volkhov-bold text-[30px] lg:text-[50px] text-neutralDark dark:text-white leading-[1.2] tracking-tight">
             Jet Vets <br />
-            <span className="text-primary">un servicio de otra galaxia </span><br />
-            directo a tu hogar
+            <span className="text-primary">Servicios veterinarios de otra galaxia </span><br />
+            directa a tu hogar. 
           </h1>
-          <p className="volkhov-bold text-[20px] lg:text-[30px] text-neutralDark dark:text-white leading-tight">
-            Cuidamos la salud de tus mascotas con atención profesional.
+          <p className="volkhov-bold text-[16px] lg:text-[30px] text-neutralDark dark:text-white leading-tight">
+            ¡Jet Vets surge con el proposito de acercar un servicio veterinario de calidad a cualquier rincon del planeta!
           </p>
+{/*         <p className="volkhov-bold text-[20px] lg:text-[16px] text-neutralDark dark:text-white leading-tight">
+Entendemos que tu peludo es parte de la familia, por ello llevamos nuestra antención con cariño y profesionalidad a su rincon favorito. Vuestro hogar. 
+          </p>
+          <p className="volkhov-bold text-[20px] lg:text-[16px] text-neutralDark dark:text-white leading-tight">
+Despidete del estrés del trasportin, viaje y salas de espera. Nosotros nos adaptamos y aterrizamos en vuestra puerta. 
+          </p> */}
+
         </div>
 
         {/* Imagen */}
@@ -28,7 +35,7 @@ export default function Hero() {
           <img
             src={mascotas}
             alt="Astronauta Jet Vets"
-            className="w-[330px] md:w-[380px] lg:w-[500px] md:translate-y-[-30px] md:translate-x-[-60px]"
+            className="w-[330px] md:w-[380px] lg:w-[450px] md:translate-y-[-20px] md:translate-x-[-20px]"
           />
         </div>
 
