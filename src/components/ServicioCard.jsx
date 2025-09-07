@@ -8,6 +8,8 @@ export default function ServicioCard({ titulo, icono, className="" }) {
   const isMobile = useIsMobile();
   const hover = (v)=>{ if (!isMobile) setFlipped(v); };
 
+
+  
   return (
     <div
       className={`relative w-full h-[440px] md:h-[233px] cursor-pointer [perspective:1000px] ${className}`}

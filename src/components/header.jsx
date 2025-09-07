@@ -42,10 +42,10 @@ export default function Header({ spaceMode, toggleSpaceMode }) {
 >
   Servicios 
 </a>
-          <a href="https://wa.me/34666666666" target="_blank" rel="noopener noreferrer">
+          <a href="https://wa.me/34666624057" target="_blank" rel="noopener noreferrer">
             <img src={whatsappIcon} alt="WhatsApp" className="block w-10 h-10" />
           </a>
-          <a href="https://instagram.com/jetvets" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.instagram.com/jet.vets" target="_blank" rel="noopener noreferrer">
             <img src={instagramIcon} alt="Instagram" className="block w-10 h-10" />
           </a>
         <button
@@ -69,7 +69,7 @@ export default function Header({ spaceMode, toggleSpaceMode }) {
                    grid place-items-center shadow-lg active:scale-95 transition"
         onClick={() => setOpen(!open)}
       >
-        {open ? "✕" : "☰"}
+        {open ? "✕" : "MENÚ"}
       </button>
 
       {/* Overlay para cerrar tocando fuera */}
@@ -93,10 +93,10 @@ export default function Header({ spaceMode, toggleSpaceMode }) {
           <a href="#nosotros" className="text-primary dark:text-white font-medium" onClick={() => setOpen(false)}>Sobre Nosotros</a>
           <a href="#servicios" className="text-primary dark:text-white font-medium" onClick={() => setOpen(false)}>Servicios</a>
           <div className="flex items-center gap-4">
-            <a href="https://wa.me/34666666666" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>
+            <a href="https://wa.me/34666624057" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>
               <img src={whatsappIcon} alt="WhatsApp" className="w-9 h-9" />
             </a>
-            <a href="https://instagram.com/jetvets" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>
+            <a href="https://instagram.com/jet.vets" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>
               <img src={instagramIcon} alt="Instagram" className="w-8 h-8" />
             </a>
           </div>

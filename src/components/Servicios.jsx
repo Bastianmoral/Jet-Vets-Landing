@@ -16,14 +16,14 @@ import { GiBrokenBone } from "react-icons/gi";
 
 const servicios = [
   { titulo: "Medicina general", icono: <FaStethoscope /> },
-  { titulo: "Traumatología", icono: <GiBrokenBone /> },
-  { titulo: "Neurología", icono: <FaBrain /> },
-  { titulo: "Identificación de animales", icono: <FaIdBadge /> },
   { titulo: "Vacunación y desparasitación", icono: <FaSyringe /> },
+  { titulo: "Identificación de animales", icono: <FaIdBadge /> },
   { titulo: "Análisis clínicos", icono: <FaFlask /> },
-  { titulo: "Diagnóstico por imagen (Radiografía y ecografía)", icono: <FaXRay /> },
   { titulo: "Certificados de salud y de viaje", icono: <FaPassport /> },
   { titulo: "Atención geriátrica", icono: <FaDog /> },
+  { titulo: "Diagnóstico por imagen (Radiografía y ecografía)", icono: <FaXRay /> },
+  { titulo: "Cirugía", icono: <FaBrain /> }, 
+  { titulo: "Traumatología", icono: <GiBrokenBone /> },
 ];
 
 export default function Servicios() {
@@ -41,12 +41,11 @@ export default function Servicios() {
     >
       {/* Título */}
       <div className="text-center mt-[min(4vw)] mb-[min(12vw)] md:mt-[min(0.5vw)] md:mb-[min(2.1vw)]">
-        <TitleWithClouds
-          as="h2"
+        <h2
           className="text-3xl lg:text-5xl volkhov-bold text-neutralDark/85 dark:text-white"
         >
           Nuestros Servicios
-        </TitleWithClouds>
+        </h2>
       </div>
 
       {/* MOBILE: carrusel horizontal */}
