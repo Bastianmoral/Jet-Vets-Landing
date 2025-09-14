@@ -2,8 +2,9 @@
 import { useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import TitleWithClouds from './TitleWithClouds';
+import { texts } from '../translations';
 
-export default function FormularioReserva() {
+export default function FormularioReserva({ lang }) {
   const [searchParams] = useSearchParams();
   const asunto = searchParams.get('asunto') || '';
   const formRef = useRef(null);
@@ -31,7 +32,7 @@ export default function FormularioReserva() {
     >
       <div className="mb-8">
         <TitleWithClouds as="h1" className="text-4xl volkhov-bold text-center dark:text-white">
-          RESERVA TU HORA
+          {texts[lang].form.title}
         </TitleWithClouds>
       </div>
 
@@ -40,7 +41,7 @@ export default function FormularioReserva() {
         {/* Fila 1: Especie / Edad */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold mb-1">Especie</label>
+            <label className="block text-sm font-semibold mb-1">{texts[lang].form.species}</label>
             <input
               type="text"
               name="especie"
@@ -48,7 +49,7 @@ export default function FormularioReserva() {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold mb-1">Edad</label>
+            <label className="block text-sm font-semibold mb-1">{texts[lang].form.age}</label>
             <input
               type="text"
               name="edad"
@@ -60,7 +61,7 @@ export default function FormularioReserva() {
         {/* Fila 2: Castrado / Raza */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold mb-1">Castrado</label>
+            <label className="block text-sm font-semibold mb-1">{texts[lang].form.neutered}</label>
             <input
               type="text"
               name="castrado"
@@ -68,7 +69,7 @@ export default function FormularioReserva() {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold mb-1">Raza</label>
+            <label className="block text-sm font-semibold mb-1">{texts[lang].form.breed}</label>
             <input
               type="text"
               name="raza"
@@ -79,7 +80,7 @@ export default function FormularioReserva() {
 
         {/* Motivo de consulta (desde URL) */}
         <div>
-          <label className="block text-sm font-semibold mb-1">Motivo de Consulta</label>
+          <label className="block text-sm font-semibold mb-1">{texts[lang].form.reason}</label>
           <input
             type="text"
             name="asunto"
@@ -91,7 +92,7 @@ export default function FormularioReserva() {
 
         {/* Tutor */}
         <div>
-          <label className="block text-sm font-semibold mb-1">Nombre compañero/tutor</label>
+          <label className="block text-sm font-semibold mb-1">{texts[lang].form.tutor}</label>
           <input
             type="text"
             name="tutor"
@@ -101,7 +102,7 @@ export default function FormularioReserva() {
 
         {/* Mensaje */}
         <div>
-          <label className="block text-sm font-semibold mb-1">Mensaje</label>
+          <label className="block text-sm font-semibold mb-1">{texts[lang].form.message}</label>
           <textarea
             name="mensaje"
             className="w-full border rounded px-3 py-2 h-24 dark:bg-neutral-700"
@@ -112,7 +113,7 @@ export default function FormularioReserva() {
           type="submit"
           className="bg-primary text-white px-6 py-2 rounded hover:bg-[#5c7c4d]"
         >
-          Reservar Hora
+          {texts[lang].form.submit}
         </button>
       </form>
     </section>
