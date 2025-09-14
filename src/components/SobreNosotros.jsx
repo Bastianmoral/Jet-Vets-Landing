@@ -1,7 +1,6 @@
 import about_img from '../assets/JetVetIlustracion02_WIP2_500px.png';
-import TitleWithClouds from './TitleWithClouds';
-import { texts } from '../translations';
 
+import { texts } from '../translations';
 export default function SobreNosotros({ lang }) {
   const t = texts[lang].about;
   return (
@@ -24,7 +23,9 @@ export default function SobreNosotros({ lang }) {
   {/* Texto: en mobile arriba (order-1), en desktop a la derecha (lg:order-2) */}
   <div className="order-1 lg:order-2 max-w-3xl mx-auto lg:mx-0 text-center lg:text-right">
 
-    <TitleWithClouds as="h2" className="text-3xl lg:text-5xl volkhov-bold mb-5 dark:text-white">{t.title}</TitleWithClouds>
+
+    <h2 className="text-3xl lg:text-5xl volkhov-bold mb-5 dark:text-white">{t.title}</h2>
+
 
     <p className="text-[14px] lg:text-xl volkhov-regular">{t.body}</p>
   </div>

@@ -1,7 +1,6 @@
 // src/components/Servicios.jsx
 import { useRef } from "react";
 import ServicioCard from "./ServicioCard";
-import TitleWithClouds from "./TitleWithClouds";
 import {
   FaStethoscope,
   FaSyringe,
@@ -10,6 +9,7 @@ import {
   FaFlask,
   FaDog,
   FaXRay,
+  FaBrain,
 } from "react-icons/fa";
 import { GiBrokenBone, GiScalpel } from "react-icons/gi";
 import { texts } from "../translations";
@@ -24,6 +24,9 @@ const servicios = [
   { key: "diagnostic_imaging", icono: <FaXRay /> },
   { key: "surgery", icono: <GiScalpel /> },
   { key: "traumatology", icono: <GiBrokenBone /> },
+
+  { key: "neurology", icono: <FaBrain /> },
+
 ];
 
 export default function Servicios({ lang }) {
@@ -41,12 +44,10 @@ export default function Servicios({ lang }) {
     >
       {/* Título */}
       <div className="text-center mt-[min(4vw)] mb-[min(12vw)] md:mt-[min(0.5vw)] md:mb-[min(2.1vw)]">
-        <TitleWithClouds
-          as="h2"
-          className="text-3xl lg:text-5xl volkhov-bold text-neutralDark/85 dark:text-white"
-        >
+        <h2 className="text-3xl lg:text-5xl volkhov-bold text-neutralDark/85 dark:text-white">
           {texts[lang].services.title}
-        </TitleWithClouds>
+        </h2>
+
       </div>
 
       {/* MOBILE: carrusel horizontal */}

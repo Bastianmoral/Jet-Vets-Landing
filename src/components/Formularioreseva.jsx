@@ -1,7 +1,6 @@
 // src/components/FormularioReserva.jsx
 import { useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import TitleWithClouds from './TitleWithClouds';
 import { texts } from '../translations';
 
 export default function FormularioReserva({ lang }) {
@@ -31,9 +30,11 @@ export default function FormularioReserva({ lang }) {
       className="min-h-screen bg-[#B6BE9C]/70 md:bg-[#B6BE9C] dark:bg-transparent flex flex-col items-center justify-center px-4"
     >
       <div className="mb-8">
-        <TitleWithClouds as="h1" className="text-4xl volkhov-bold text-center dark:text-white">
+
+        <h1 className="text-4xl volkhov-bold text-center dark:text-white">
           {texts[lang].form.title}
-        </TitleWithClouds>
+        </h1>
+
       </div>
 
       <form ref={formRef} onSubmit={handleSubmit} className="bg-white dark:bg-neutral-800 dark:text-white p-8 rounded-xl shadow-md w-full max-w-md space-y-4">

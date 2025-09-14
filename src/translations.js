@@ -26,7 +26,9 @@ export const texts = {
         geriatric_care: 'Atención geriátrica',
         diagnostic_imaging: 'Diagnóstico por imagen (Radiografía y ecografía)',
         surgery: 'Cirugía',
-        traumatology: 'Traumatología'
+        traumatology: 'Traumatología',
+        neurology: 'Neurología'
+
       }
     },
     serviceCard: {
@@ -75,7 +77,9 @@ export const texts = {
         geriatric_care: 'Geriatric care',
         diagnostic_imaging: 'Diagnostic imaging (X-ray and ultrasound)',
         surgery: 'Surgery',
-        traumatology: 'Traumatology'
+        traumatology: 'Traumatology',
+        neurology: 'Neurology'
+
       }
     },
     serviceCard: {
