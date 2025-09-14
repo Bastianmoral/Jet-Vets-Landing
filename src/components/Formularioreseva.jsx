@@ -130,7 +130,7 @@ export default function FormularioReserva() {
               autoComplete="email"
               required
               className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
-              placeholder="correo@dominio.com"
+              placeholder="correo@dominio.es"
             />
           </div>
           <div>
@@ -143,7 +143,7 @@ export default function FormularioReserva() {
               pattern="^[\s\d()+\-\.]{6,}$"
               required
               className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
-              placeholder="+56 9 1234 5678"
+              placeholder="+34 612 345 678"
               title="Ingresa un teléfono válido"
             />
           </div>
