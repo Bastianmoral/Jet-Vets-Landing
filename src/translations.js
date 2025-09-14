@@ -28,6 +28,7 @@ export const texts = {
         surgery: 'Cirugía',
         traumatology: 'Traumatología',
         neurology: 'Neurología'
+
       }
     },
     serviceCard: {
@@ -78,6 +79,7 @@ export const texts = {
         surgery: 'Surgery',
         traumatology: 'Traumatology',
         neurology: 'Neurology'
+
       }
     },
     serviceCard: {

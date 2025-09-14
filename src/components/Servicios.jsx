@@ -24,7 +24,9 @@ const servicios = [
   { key: "diagnostic_imaging", icono: <FaXRay /> },
   { key: "surgery", icono: <GiScalpel /> },
   { key: "traumatology", icono: <GiBrokenBone /> },
+
   { key: "neurology", icono: <FaBrain /> },
+
 ];
 
 export default function Servicios({ lang }) {
@@ -45,6 +47,7 @@ export default function Servicios({ lang }) {
         <h2 className="text-3xl lg:text-5xl volkhov-bold text-neutralDark/85 dark:text-white">
           {texts[lang].services.title}
         </h2>
+
       </div>
 
       {/* MOBILE: carrusel horizontal */}

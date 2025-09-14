@@ -30,9 +30,11 @@ export default function FormularioReserva({ lang }) {
       className="min-h-screen bg-[#B6BE9C]/70 md:bg-[#B6BE9C] dark:bg-transparent flex flex-col items-center justify-center px-4"
     >
       <div className="mb-8">
+
         <h1 className="text-4xl volkhov-bold text-center dark:text-white">
           {texts[lang].form.title}
         </h1>
+
       </div>
 
       <form ref={formRef} onSubmit={handleSubmit} className="bg-white dark:bg-neutral-800 dark:text-white p-8 rounded-xl shadow-md w-full max-w-md space-y-4">
