@@ -1,8 +1,10 @@
 // src/components/Hero.jsx
 import mascotas from '../assets/Ilustracion2_Clean_500.png';
 import FloatingRocket from './FloatingRocket';
+import { texts } from '../translations';
 
-export default function Hero() {
+export default function Hero({ lang }) {
+  const t = texts[lang].hero;
   return (
     <section className="relative isolate bg-[#B6BE9C] dark:bg-transparent w-full min-h-screen flex items-center overflow-x-clip">
       {/* Cohete animado (al fondo) */}
@@ -15,11 +17,10 @@ export default function Hero() {
         <div className="flex flex-col justify-center items-center md:items-end text-center md:text-right gap-2 md:gap-10">
           <h1 className="volkhov-bold text-[30px] lg:text-[50px] text-neutralDark dark:text-white leading-[1.2] tracking-tight">
             Jet Vets <br />
-            <span className="text-primary">Servicios veterinarios de otra galaxia </span><br />
-            directa a tu hogar. 
+            <span className="text-primary">{t.subtitle}</span>
           </h1>
           <p className="volkhov-bold text-[16px] lg:text-[30px] text-neutralDark dark:text-white leading-tight">
-            ¡Jet Vets surge con el proposito de acercar un servicio veterinario de calidad a cualquier rincon del planeta!
+            {t.description}
           </p>
 {/*         <p className="volkhov-bold text-[20px] lg:text-[16px] text-neutralDark dark:text-white leading-tight">
 Entendemos que tu peludo es parte de la familia, por ello llevamos nuestra antención con cariño y profesionalidad a su rincon favorito. Vuestro hogar. 

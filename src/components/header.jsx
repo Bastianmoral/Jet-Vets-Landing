@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import logo from "../assets/logo.png";
 import whatsappIcon from "../assets/icons8-whatsapp.svg";
-import instagramIcon from "../assets/icons8-instagram.svg";
+import instagramIcon from "../assets/icons8-instagram.gif";
+import { texts } from "../translations";
 
-export default function Header({ spaceMode, toggleSpaceMode }) {
+export default function Header({ spaceMode, toggleSpaceMode, lang, toggleLang }) {
   const [open, setOpen] = useState(false);
 
   // Bloquea scroll del body cuando el menú está abierto (mejor UX)
@@ -21,26 +22,26 @@ export default function Header({ spaceMode, toggleSpaceMode }) {
         <a
   href="#nosotros"
   onClick={(e) => {
-    e.preventDefault(); // evita el salto brusco por defecto
+    e.preventDefault();
     document.getElementById("nosotros")?.scrollIntoView({
       behavior: "smooth",
     });
   }}
   className="text-primary dark:text-white font-medium cursor-pointer"
 >
-  Sobre Nosotros
+  {texts[lang].header.about}
 </a>
         <a
   href="#servicios"
   onClick={(e) => {
-    e.preventDefault(); // evita el salto brusco por defecto
-    document.getElementById("servicios")?.scrollIntoView({ 
+    e.preventDefault();
+    document.getElementById("servicios")?.scrollIntoView({
       behavior: "smooth",
     });
   }}
   className="text-primary dark:text-white font-medium cursor-pointer"
 >
-  Servicios 
+  {texts[lang].header.services}
 </a>
           <a href="https://wa.me/34666666666" target="_blank" rel="noopener noreferrer">
             <img src={whatsappIcon} alt="WhatsApp" className="block w-10 h-10" />
@@ -52,10 +53,16 @@ export default function Header({ spaceMode, toggleSpaceMode }) {
           onClick={toggleSpaceMode}
           className="bg-[#5c7c4d] text-white px-4 py-2 rounded-lg text-center w-40"
         >
-          {spaceMode ? 'Modo Claro' : 'Modo Espacial'}
+          {spaceMode ? texts[lang].header.light : texts[lang].header.space}
+        </button>
+        <button
+          onClick={toggleLang}
+          className="bg-[#5c7c4d] text-white px-4 py-2 rounded-lg text-center"
+        >
+          {lang === 'es' ? 'EN' : 'ES'}
         </button>
         <a href="#reserva" className="bg-[#5c7c4d] text-white px-4 py-2 rounded-lg text-center">
-          Reservar tu hora
+          {texts[lang].header.book}
         </a>
       </nav>
 
@@ -90,8 +97,8 @@ export default function Header({ spaceMode, toggleSpaceMode }) {
       >
         <nav className="flex flex-col items-end gap-6">
           <img src={logo} alt="Jet Vets Logo" className="h-[100px] md:h-[130px] mb-2"/>
-          <a href="#nosotros" className="text-primary dark:text-white font-medium" onClick={() => setOpen(false)}>Sobre Nosotros</a>
-          <a href="#servicios" className="text-primary dark:text-white font-medium" onClick={() => setOpen(false)}>Servicios</a>
+          <a href="#nosotros" className="text-primary dark:text-white font-medium" onClick={() => setOpen(false)}>{texts[lang].header.about}</a>
+          <a href="#servicios" className="text-primary dark:text-white font-medium" onClick={() => setOpen(false)}>{texts[lang].header.services}</a>
           <div className="flex items-center gap-4">
             <a href="https://wa.me/34666666666" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>
               <img src={whatsappIcon} alt="WhatsApp" className="w-9 h-9" />
@@ -104,14 +111,20 @@ export default function Header({ spaceMode, toggleSpaceMode }) {
             onClick={() => { toggleSpaceMode(); setOpen(false); }}
             className="bg-[#5c7c4d] text-white px-4 py-2 rounded-lg w-40 self-end"
           >
-            {spaceMode ? 'Modo Claro' : 'Modo Espacial'}
+            {spaceMode ? texts[lang].header.light : texts[lang].header.space}
+          </button>
+          <button
+            onClick={() => { toggleLang(); setOpen(false); }}
+            className="bg-[#5c7c4d] text-white px-4 py-2 rounded-lg w-20 self-end"
+          >
+            {lang === 'es' ? 'EN' : 'ES'}
           </button>
           <a
             href="#reserva"
             onClick={() => setOpen(false)}
             className="mt-3 bg-[#5c7c4d] text-white px-1 py-3 rounded-lg"
           >
-            Reservar tu hora
+            {texts[lang].header.book}
           </a>
         </nav>
       </div>

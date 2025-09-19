@@ -7,6 +7,8 @@ import StarBackground from './components/StarBackground';
 export default function App() {
   const [spaceMode, setSpaceMode] = useState(false);
   const toggleSpaceMode = () => setSpaceMode(!spaceMode);
+  const [lang, setLang] = useState('es');
+  const toggleLang = () => setLang(lang === 'es' ? 'en' : 'es');
 
   return (
     <div id="page" className={spaceMode ? 'dark' : ''}>
@@ -17,7 +19,7 @@ export default function App() {
         <Routes>
           <Route
             path="/jetvet"
-            element={<Home spaceMode={spaceMode} toggleSpaceMode={toggleSpaceMode} />}
+            element={<Home spaceMode={spaceMode} toggleSpaceMode={toggleSpaceMode} lang={lang} toggleLang={toggleLang} />}
           />
         </Routes>
       </div>
