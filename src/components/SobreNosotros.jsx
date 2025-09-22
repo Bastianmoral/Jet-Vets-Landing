@@ -1,7 +1,8 @@
 import about_img from '../assets/JetVetIlustracion02_WIP2_500px.png';
-/* import TitleWithClouds from './TitleWithClouds'; */
+import { texts } from '../translations';
 
-export default function SobreNosotros() {
+export default function SobreNosotros({ lang }) {
+  const t = texts[lang].about;
   return (
     <section
       id="nosotros"
@@ -22,26 +23,9 @@ export default function SobreNosotros() {
   {/* Texto: en mobile arriba (order-1), en desktop a la derecha (lg:order-2) */}
   <div className="order-1 lg:order-2 max-w-3xl mx-auto lg:mx-0 text-center lg:text-right">
 
-    <h2 className="text-3xl lg:text-5xl volkhov-bold mb-5 dark:text-white">Sobre Nosotros</h2>
+    <h2 className="text-3xl lg:text-5xl volkhov-bold mb-5 dark:text-white">{t.title}</h2>
 
-    <p className="text-[14px] lg:text-xl volkhov-regular">
-  Somos un equipo con experiencia en <b>clínica veterinaria</b> y <b>hospitales de referencia</b>, 
-  siempre en <b>formación continua</b> para ofrecer la <b>atención de calidad</b> que vuestros 
-  compañeros de cuatro patas se merecen. 
-  <br /><br />
-  
-  Entendemos que tu peludo es parte de la <b>familia</b>; por ello, llevamos nuestra atención 
-  con <b>cariño</b> y <b>profesionalidad</b> a su rincón favorito: <b>vuestro hogar</b>.
-  <br /><br />
-  
-  Despídete del <b>estrés</b> del transportín, los <b>viajes</b> y las <b>salas de espera</b>. 
-  Nosotros nos adaptamos y <b>aterrizamos en vuestra puerta</b>.
-  <br /><br />
-  
-  Disponemos de <b>servicio de laboratorio propio</b>, <b>diagnóstico por imagen</b> y  
-  <b> hospitalización</b> en nuestros <b>centros asociados</b>. Para que a tu peludo no le falte de nada.
-  <br /><br />
-</p>
+    <p className="text-[14px] lg:text-xl volkhov-regular">{t.body}</p>
   </div>
 </div>
     </section>
