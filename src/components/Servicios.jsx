@@ -24,7 +24,6 @@ const servicios = [
   { key: "diagnostic_imaging", icono: <FaXRay /> },
   { key: "surgery", icono: <GiScalpel /> },
   { key: "traumatology", icono: <GiBrokenBone /> },
-  { key: "neurology", icono: <FaBrain /> },
 ];
 
 export default function Servicios({ lang }) {

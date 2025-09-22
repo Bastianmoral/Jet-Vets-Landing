@@ -12,7 +12,7 @@ export default function FloatingRocket() {
   const target = useMemo(() => {
     return isMobile
       ? { x: "35vw", y: -50, rot: 2 }   // móvil: más cerca del centro
-      : { x: "42vw", y: 30, rot: 4 };  // desktop: a la derecha del texto
+      : { x: "47vw", y: 30, rot: 4 };  // desktop: a la derecha del texto
   }, [isMobile]);
 
   // Tamaño fijo para evitar CLS al cargar la imagen

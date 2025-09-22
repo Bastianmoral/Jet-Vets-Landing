@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import logo from "../assets/logo.png";
 import whatsappIcon from "../assets/icons8-whatsapp.svg";
-import instagramIcon from "../assets/icons8-instagram.gif";
+import instagramIcon from "../assets/icons8-instagram.svg";
 import { texts } from "../translations";
+import flagES from "../assets/flag-es.svg";
+import flagGB from "../assets/flag-uk.svg";
 
 export default function Header({ spaceMode, toggleSpaceMode, lang, toggleLang }) {
   const [open, setOpen] = useState(false);
@@ -56,11 +58,18 @@ export default function Header({ spaceMode, toggleSpaceMode, lang, toggleLang })
           {spaceMode ? texts[lang].header.light : texts[lang].header.space}
         </button>
         <button
-          onClick={toggleLang}
-          className="bg-[#5c7c4d] text-white px-4 py-2 rounded-lg text-center"
-        >
-          {lang === 'es' ? 'EN' : 'ES'}
-        </button>
+  onClick={toggleLang}
+  className="bg-[#5c7c4d] rounded-full w-11 h-11 grid place-items-center hover:opacity-90 active:scale-95 transition"
+  aria-label={lang === "es" ? "Cambiar a inglés" : "Change to Spanish"}
+  title={lang === "es" ? "English" : "Español"}
+>
+  <img
+    src={lang === "es" ? flagGB : flagES}
+    alt={lang === "es" ? "English flag" : "Bandera de España"}
+    className="w-9 h-9 rounded-full object-cover"
+    draggable="false"
+  />
+</button>
         <a href="#reserva" className="bg-[#5c7c4d] text-white px-4 py-2 rounded-lg text-center">
           {texts[lang].header.book}
         </a>
@@ -76,7 +85,7 @@ export default function Header({ spaceMode, toggleSpaceMode, lang, toggleLang })
                    grid place-items-center shadow-lg active:scale-95 transition"
         onClick={() => setOpen(!open)}
       >
-        {open ? "✕" : "☰"}
+        {open ? "✕" : "Menú"}
       </button>
 
       {/* Overlay para cerrar tocando fuera */}
@@ -114,11 +123,19 @@ export default function Header({ spaceMode, toggleSpaceMode, lang, toggleLang })
             {spaceMode ? texts[lang].header.light : texts[lang].header.space}
           </button>
           <button
-            onClick={() => { toggleLang(); setOpen(false); }}
-            className="bg-[#5c7c4d] text-white px-4 py-2 rounded-lg w-20 self-end"
-          >
-            {lang === 'es' ? 'EN' : 'ES'}
-          </button>
+  onClick={() => { toggleLang(); setOpen(false); }}
+  className="bg-[#5c7c4d] rounded-full w-10 h-10 grid place-items-center self-end hover:opacity-90 active:scale-95 transition"
+  aria-label={lang === "es" ? "Cambiar a inglés" : "Change to Spanish"}
+  title={lang === "es" ? "English" : "Español"}
+>
+  <img
+    src={lang === "es" ? flagGB : flagES}
+    alt={lang === "es" ? "English flag" : "Bandera de España"}
+    className="w-6 h-6 rounded-full object-cover"
+    draggable="false"
+  />
+</button>
+
           <a
             href="#reserva"
             onClick={() => setOpen(false)}

@@ -1,83 +1,95 @@
 // src/components/FormularioReserva.jsx
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import emailjs from '@emailjs/browser';
 import { texts } from '../translations';
 
-export default function FormularioReserva({ lang }) {
+export default function FormularioReserva({ lang = 'es' }) {
+  const t = texts[lang].form;
   const [searchParams] = useSearchParams();
-  const asunto = searchParams.get('asunto') || '';
+  const asuntoParam = (searchParams.get('asunto') || '').trim();
+
   const formRef = useRef(null);
-  const [neuteredValue, setNeuteredValue] = useState('');
-  const [selectedReasons, setSelectedReasons] = useState([]);
-  const [otherReason, setOtherReason] = useState('');
+  const [enviando, setEnviando] = useState(false);
 
-  const neuteredOptions = texts[lang].form.neuteredOptions;
-  const reasonOptions = texts[lang].form.reasonOptions;
+  // EmailJS (Vite)
+  const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+  const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+  const PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
-  const normalizedReasonValue = useMemo(() => {
-    if (!asunto) return { values: [], other: '' };
+  // Opciones i18n
+  const neuteredOptions = texts[lang].form.neuteredOptions; // [{value:'yes',label:'Sí'}, ...]
+  const reasonOptions   = texts[lang].form.reasonOptions;   // [{value:'general',label:'Medicina general'}, ... , {value:'other',label:'Otro motivo'}]
 
-    const allReasonOptions = [
-      ...texts.es.form.reasonOptions,
-      ...texts.en.form.reasonOptions,
+  // Mapa cross-idioma: value -> label y label -> value
+  const { valueByLabelLower, labelByValue } = useMemo(() => {
+    const dicts = [
+      texts.es.form.reasonOptions,
+      texts.en.form.reasonOptions
     ];
 
-    const matched = allReasonOptions.find(
-      (option) => option.label.toLowerCase() === asunto.toLowerCase()
-    );
+    const _valueByLabelLower = new Map();
+    const _labelByValue = new Map();
 
-    if (matched) {
-      return { values: [matched.value], other: '' };
-    }
-
-    return { values: ['other'], other: asunto };
-  }, [asunto]);
-
-  useEffect(() => {
-    setSelectedReasons(normalizedReasonValue.values);
-    setOtherReason(normalizedReasonValue.other);
-  }, [normalizedReasonValue]);
-
-  useEffect(() => {
-    if (!selectedReasons.includes('other') && otherReason) {
-      setOtherReason('');
-    }
-  }, [selectedReasons, otherReason]);
-
-  const reasonLabelMap = useMemo(() => {
-    const map = new Map();
-    const dictionaries = [reasonOptions, texts.es.form.reasonOptions, texts.en.form.reasonOptions];
-
-    dictionaries.forEach((list) => {
-      list.forEach((option) => {
-        if (!map.has(option.value)) {
-          map.set(option.value, option.label);
+    dicts.forEach(list => {
+      list.forEach(({ value, label }) => {
+        // Para búsqueda por label (proveniente de ?asunto= en cualquier idioma)
+        const key = (label || '').toLowerCase();
+        if (key && !_valueByLabelLower.has(key)) {
+          _valueByLabelLower.set(key, value);
+        }
+        // Para mostrar el label correcto del idioma actual
+        if (!_labelByValue.has(value)) {
+          _labelByValue.set(value, label);
         }
       });
     });
 
-    return map;
-  }, [reasonOptions]);
+    return { valueByLabelLower: _valueByLabelLower, labelByValue: _labelByValue };
+  }, []);
 
-  const selectedReasonLabels = useMemo(
-    () => selectedReasons.map((value) => reasonLabelMap.get(value) ?? value),
-    [selectedReasons, reasonLabelMap]
+  // Valor inicial del select según ?asunto= (acepta label ES/EN). Si no calza, queda vacío.
+  const initialReasonValue = useMemo(() => {
+    if (!asuntoParam) return '';
+    const found = valueByLabelLower.get(asuntoParam.toLowerCase());
+    return found || '';
+  }, [asuntoParam, valueByLabelLower]);
+
+  // Si el usuario elige "other", permitimos detalle
+  const [reasonValue, setReasonValue] = useState(initialReasonValue);
+  const [otherReason, setOtherReason] = useState(
+    initialReasonValue === 'other' ? asuntoParam : ''
   );
 
-  const handleSubmit = (e) => {
+  const reasonLabel = reasonValue ? (labelByValue.get(reasonValue) || reasonValue) : '';
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const form = formRef.current;
-    if (!window.emailjs) return;
-    window.emailjs
-      .sendForm('SERVICE_ID', 'TEMPLATE_ID', form)
-      .then(() => {
-        // TODO: revisar conflictos de horario antes de crear eventos en Google Calendar
-        form.reset();
-        alert('Solicitud enviada');
-      })
-      .catch((err) => {
-        console.error('EmailJS error', err);
-      });
+
+    if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
+      alert('Error de configuración de EmailJS');
+      return;
+    }
+
+    try {
+      setEnviando(true);
+      // Nota: tu template debería usar {{reply_to}} para responder al correo del tutor.
+      await emailjs.sendForm(
+        SERVICE_ID,
+        TEMPLATE_ID,
+        formRef.current,
+        { publicKey: PUBLIC_KEY }
+      );
+      formRef.current.reset();
+      setReasonValue('');
+      setOtherReason('');
+      alert(t.sentOK || 'Solicitud enviada');
+    } catch (err) {
+      console.error('EmailJS error', err);
+      alert(t.sentError || 'No se pudo enviar. Intenta nuevamente.');
+    } finally {
+      setEnviando(false);
+    }
   };
 
   return (
@@ -86,28 +98,40 @@ export default function FormularioReserva({ lang }) {
       className="min-h-screen bg-[#B6BE9C]/70 md:bg-[#B6BE9C] dark:bg-transparent flex flex-col items-center justify-center px-4"
     >
       <div className="mb-8">
-        <h1 className="text-4xl volkhov-bold text-center dark:text-white">
-          {texts[lang].form.title}
-        </h1>
+        <h1 className="text-4xl volkhov-bold text-center dark:text-white">{t.title}</h1>
       </div>
 
-      <form ref={formRef} onSubmit={handleSubmit} className="bg-white dark:bg-neutral-800 dark:text-white p-8 rounded-xl shadow-md w-full max-w-md space-y-4">
+      <form
+        ref={formRef}
+        onSubmit={handleSubmit}
+        className="bg-white dark:bg-neutral-800 dark:text-white p-8 rounded-xl shadow-md w-full max-w-md space-y-4"
+      >
+        {/* Honeypot anti-spam */}
+        <input
+          type="text"
+          name="company"
+          autoComplete="off"
+          tabIndex="-1"
+          className="hidden"
+        />
 
         {/* Fila 1: Especie / Edad */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold mb-1">{texts[lang].form.species}</label>
+            <label className="block text-sm font-semibold mb-1">{t.species}</label>
             <input
               type="text"
               name="especie"
+              required
               className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold mb-1">{texts[lang].form.age}</label>
+            <label className="block text-sm font-semibold mb-1">{t.age}</label>
             <input
               type="text"
               name="edad"
+              required
               className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
             />
           </div>
@@ -116,75 +140,81 @@ export default function FormularioReserva({ lang }) {
         {/* Fila 2: Castrado / Raza */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold mb-1">{texts[lang].form.neutered}</label>
+            <label className="block text-sm font-semibold mb-1">{t.neutered}</label>
             <select
               name="castrado"
-              value={neuteredValue}
-              onChange={(event) => setNeuteredValue(event.target.value)}
+              defaultValue=""
+              required
               className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
             >
-              <option value="" disabled>
-                --
-              </option>
-              {neuteredOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
+              <option value="" disabled>--</option>
+              {neuteredOptions.map(opt => (
+                <option key={opt.value} value={opt.label}>{opt.label}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-semibold mb-1">{texts[lang].form.breed}</label>
+            <label className="block text-sm font-semibold mb-1">{t.breed}</label>
             <input
               type="text"
               name="raza"
+              required
               className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
             />
           </div>
         </div>
 
-        {/* Motivo de consulta (desde URL) */}
+        {/* Motivo de consulta: SELECT simple (como la versión sin traducción) */}
         <div>
-          <label className="block text-sm font-semibold mb-1">{texts[lang].form.reason}</label>
+          <label className="block text-sm font-semibold mb-1">{t.reason}</label>
           <select
-            multiple
-            name="motivo_consulta"
-            value={selectedReasons}
-            onChange={(event) =>
-              setSelectedReasons(
-                Array.from(event.target.selectedOptions, (option) => option.value)
-              )
-            }
-            className="w-full border rounded px-3 py-2 h-32 dark:bg-neutral-700"
+            name="asunto" // <- EmailJS: {{asunto}}
+            required
+            className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
+            value={reasonValue}
+            onChange={(e) => {
+              const v = e.target.value;
+              setReasonValue(v);
+              if (v !== 'other') setOtherReason('');
+            }}
           >
-            {reasonOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
+            <option value="" disabled>
+              {t.reasonPlaceholder || 'Selecciona un servicio…'}
+            </option>
+            {reasonOptions.map(opt => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
               </option>
             ))}
           </select>
-          <input type="hidden" name="motivo_consulta_detalle" value={selectedReasonLabels.join(', ')} />
-        </div>
 
-        {selectedReasons.includes('other') && (
-          <div>
-            <label className="block text-sm font-semibold mb-1">{texts[lang].form.otherReasonLabel}</label>
-            <textarea
-              name="motivo_consulta_otro"
-              value={otherReason}
-              onChange={(event) => setOtherReason(event.target.value)}
-              placeholder={texts[lang].form.otherReasonPlaceholder}
-              className="w-full border rounded px-3 py-2 h-20 dark:bg-neutral-700"
-            />
-          </div>
-        )}
+          {/* Campo oculto con el label del motivo (útil para el template de EmailJS) */}
+          <input type="hidden" name="motivo_consulta_label" value={reasonLabel} />
+
+          {/* Si elige "Otro", permitimos detallar */}
+          {reasonValue === 'other' && (
+            <div className="mt-2">
+              <label className="block text-sm font-semibold mb-1">
+                {t.otherReasonLabel || 'Describe el motivo'}
+              </label>
+              <textarea
+                name="motivo_consulta_otro"
+                value={otherReason}
+                onChange={(e) => setOtherReason(e.target.value)}
+                placeholder={t.otherReasonPlaceholder || 'Escribe aquí…'}
+                className="w-full border rounded px-3 py-2 h-20 dark:bg-neutral-700"
+              />
+            </div>
+          )}
+        </div>
 
         {/* Tutor */}
         <div>
-          <label className="block text-sm font-semibold mb-1">{texts[lang].form.tutor}</label>
+          <label className="block text-sm font-semibold mb-1">{t.tutor}</label>
           <input
             type="text"
             name="tutor"
+            required
             className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
           />
         </div>
@@ -192,37 +222,48 @@ export default function FormularioReserva({ lang }) {
         {/* Contacto */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-semibold mb-1">{texts[lang].form.phone}</label>
+            <label className="block text-sm font-semibold mb-1">{t.phone}</label>
             <input
               type="tel"
               name="telefono"
+              autoComplete="tel"
+              inputMode="tel"
+              pattern="^[\s\d()+\-\.]{6,}$"
+              required
               className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
+              placeholder={t.phonePlaceholder || '+34 612 345 678'}
+              title={t.phoneTitle || 'Ingresa un teléfono válido'}
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold mb-1">{texts[lang].form.email}</label>
+            <label className="block text-sm font-semibold mb-1">{t.email}</label>
             <input
               type="email"
-              name="correo"
+              name="reply_to"   // <- usa {{reply_to}} en tu template
+              autoComplete="email"
+              required
               className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
+              placeholder={t.emailPlaceholder || 'correo@dominio.es'}
             />
           </div>
         </div>
 
         {/* Mensaje */}
         <div>
-          <label className="block text-sm font-semibold mb-1">{texts[lang].form.message}</label>
+          <label className="block text-sm font-semibold mb-1">{t.message}</label>
           <textarea
             name="mensaje"
+            required
             className="w-full border rounded px-3 py-2 h-24 dark:bg-neutral-700"
           />
         </div>
 
         <button
           type="submit"
-          className="bg-primary text-white px-6 py-2 rounded hover:bg-[#5c7c4d]"
+          disabled={enviando}
+          className="bg-primary text-white px-6 py-2 rounded hover:bg-[#5c7c4d] disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          {texts[lang].form.submit}
+          {enviando ? (t.sending || 'Enviando…') : t.submit}
         </button>
       </form>
     </section>
