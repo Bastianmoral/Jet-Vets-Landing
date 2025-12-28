@@ -45,6 +45,15 @@ export const texts = {
       ],
       breed: 'Raza',
       reason: 'Motivo de la consulta',
+      preferredDate: 'Fecha preferida',
+      preferredTimeBlock: 'Bloque horario preferido',
+      timeBlockPlaceholder: 'Selecciona un bloque…',
+      timeBlockOptions: [
+        '09:00 - 11:00',
+        '11:00 - 13:00',
+        '15:00 - 17:00',
+        '17:00 - 19:00'
+      ],
       reasonOptions: [
         { value: 'general_medicine', label: 'Medicina general' },
         { value: 'vaccination', label: 'Vacunación y desparasitación' },
@@ -64,7 +73,13 @@ export const texts = {
       phone: 'Teléfono',
       email: 'Correo electrónico',
       message: 'Mensaje',
-      submit: 'Reservar Cita'
+      submit: 'Reservar Cita',
+      disclaimer: '*La solicitud de cita no constituye confirmación automática. Confirmaremos disponibilidad a la brevedad.*',
+      calendarSuccess: 'Se abrió Google Calendar para crear la solicitud. Esta solicitud no confirma la cita. Nuestro equipo revisará la disponibilidad y confirmará por WhatsApp o correo.',
+      serviceRequired: 'Selecciona un servicio',
+      dateRequired: 'Selecciona una fecha preferida',
+      timeBlockRequired: 'Selecciona un bloque horario',
+      contactRequired: 'Indica teléfono o correo'
     },
     footer: {
       rights: '\u00a9 2025 Jet Vets. Todos los derechos reservados.'
@@ -116,6 +131,15 @@ export const texts = {
       ],
       breed: 'Breed',
       reason: 'Reason for visit',
+      preferredDate: 'Preferred date',
+      preferredTimeBlock: 'Preferred time block',
+      timeBlockPlaceholder: 'Select a time block…',
+      timeBlockOptions: [
+        '09:00 - 11:00',
+        '11:00 - 13:00',
+        '15:00 - 17:00',
+        '17:00 - 19:00'
+      ],
       reasonOptions: [
         { value: 'general_medicine', label: 'General medicine' },
         { value: 'vaccination', label: 'Vaccination and deworming' },
@@ -135,7 +159,13 @@ export const texts = {
       phone: 'Phone number',
       email: 'Email',
       message: 'Message',
-      submit: 'Book Appointment'
+      submit: 'Book Appointment',
+      disclaimer: '*Appointment requests do not confirm a booking automatically. We will confirm availability shortly.*',
+      calendarSuccess: 'Google Calendar opened to create the request. This request does not confirm the appointment. Our team will check availability and confirm via WhatsApp or email.',
+      serviceRequired: 'Select a service',
+      dateRequired: 'Select a preferred date',
+      timeBlockRequired: 'Select a time block',
+      contactRequired: 'Provide a phone number or email'
     },
     footer: {
       rights: '\u00a9 2025 Jet Vets. All rights reserved.'
@@ -144,4 +174,3 @@ export const texts = {
 };
 
 export default texts;
-

@@ -1,7 +1,6 @@
 // src/components/FormularioReserva.jsx
 import { useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import emailjs from '@emailjs/browser';
 import { texts } from '../translations';
 
 // Utilidades de sanitización
@@ -14,6 +13,59 @@ const sanitizeInput = (value, maxLength = 200) => {
     .slice(0, maxLength)
     .replace(/[<>]/g, '') // Elimina < y > para prevenir XSS básico
     .replace(/[\x00-\x1F\x7F]/g, ''); // Elimina caracteres de control
+};
+
+const sanitizeText = (value = '') => encodeURIComponent(value.toString().trim());
+
+// Formato local sin zona horaria para Google Calendar (YYYYMMDDTHHmmss)
+// Google interpreta el timestamp sin zona como hora local del navegador.
+const formatDateToGoogleCalendar = (date) => {
+  const pad = (value) => String(value).padStart(2, '0');
+  return [
+    date.getFullYear(),
+    pad(date.getMonth() + 1),
+    pad(date.getDate())
+  ].join('') + 'T' + [
+    pad(date.getHours()),
+    pad(date.getMinutes()),
+    pad(date.getSeconds())
+  ].join('');
+};
+
+const buildGoogleCalendarUrl = ({ title, start, end, details, location, guests }) => {
+  const baseUrl = 'https://calendar.google.com/calendar/render';
+  const params = [
+    'action=TEMPLATE',
+    `text=${sanitizeText(title)}`,
+    `dates=${sanitizeText(`${start}/${end}`)}`,
+    `details=${sanitizeText(details)}`
+  ];
+
+  if (location) {
+    params.push(`location=${sanitizeText(location)}`);
+  }
+
+  const guestList = Array.isArray(guests) ? guests.filter(Boolean).join(',') : guests;
+  if (guestList) {
+    params.push(`add=${sanitizeText(guestList)}`);
+  }
+
+  return `${baseUrl}?${params.join('&')}`;
+};
+
+const parseTimeRange = (value) => {
+  if (!value) return null;
+  const [startRaw, endRaw] = value.split('-').map((part) => part.trim());
+  if (!startRaw || !endRaw) return null;
+  return { startRaw, endRaw };
+};
+
+const buildDateFromParts = (dateValue, timeValue) => {
+  if (!dateValue || !timeValue) return null;
+  const [year, month, day] = dateValue.split('-').map(Number);
+  const [hour, minute] = timeValue.split(':').map(Number);
+  if (!year || !month || !day || Number.isNaN(hour) || Number.isNaN(minute)) return null;
+  return new Date(year, month - 1, day, hour, minute, 0);
 };
 
 // Validaciones mejoradas
@@ -39,21 +91,6 @@ const validators = {
   }
 };
 
-// Rate limiting simple (lado cliente)
-const canSubmitForm = (() => {
-  const COOLDOWN_MS = 60000; // 1 minuto entre envíos
-  let lastSubmit = 0;
-  
-  return () => {
-    const now = Date.now();
-    if (now - lastSubmit < COOLDOWN_MS) {
-      return false;
-    }
-    lastSubmit = now;
-    return true;
-  };
-})();
-
 export default function FormularioReserva({ lang = 'es' }) {
   const t = texts[lang].form;
   const [searchParams] = useSearchParams();
@@ -62,11 +99,9 @@ export default function FormularioReserva({ lang = 'es' }) {
   const formRef = useRef(null);
   const [enviando, setEnviando] = useState(false);
   const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState('');
 
-  // EmailJS
-  const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-  const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-  const PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+  const inviteeEmail = import.meta.env.VITE_JETVETS_CALENDAR_INVITEE_EMAIL;
 
   // Honeypot mejorado con timestamp
   const [honeypotTime] = useState(Date.now());
@@ -117,14 +152,14 @@ export default function FormularioReserva({ lang = 'es' }) {
 
     switch (name) {
       case 'reply_to':
-        if (!validators.email(value)) {
+        if (value && !validators.email(value)) {
           newErrors[name] = t.emailError || 'Email inválido';
         } else {
           delete newErrors[name];
         }
         break;
       case 'telefono':
-        if (!validators.phone(value)) {
+        if (value && !validators.phone(value)) {
           newErrors[name] = t.phoneError || 'Teléfono inválido (ej: +34612345678)';
         } else {
           delete newErrors[name];
@@ -162,17 +197,7 @@ export default function FormularioReserva({ lang = 'es' }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
-      alert('Error de configuración de EmailJS');
-      return;
-    }
-
-    // Rate limiting
-    if (!canSubmitForm()) {
-      alert(t.tooFastError || 'Por favor espera 1 minuto entre envíos');
-      return;
-    }
+    setSuccessMessage('');
 
     // Verificar honeypot
     const formData = new FormData(formRef.current);
@@ -182,23 +207,44 @@ export default function FormularioReserva({ lang = 'es' }) {
     // Si el honeypot está lleno o el formulario se envió muy rápido (< 3 segundos), es spam
     if (honeypotValue || (Date.now() - parseInt(honeypotTimestamp)) < 3000) {
       console.warn('Spam detectado');
-      // Simular éxito para no revelar detección
-      alert(t.sentOK || 'Solicitud enviada');
       return;
     }
 
-    // Validar todos los campos
     const allErrors = {};
-    ['especie', 'edad', 'raza', 'tutor', 'telefono', 'reply_to', 'mensaje'].forEach(field => {
-      const value = formData.get(field);
-      validateField(field, value);
-      if (errors[field]) {
-        allErrors[field] = errors[field];
-      }
-    });
+    const preferredDate = sanitizeInput(formData.get('preferred_date'), 20);
+    const preferredBlock = sanitizeInput(formData.get('preferred_block'), 50);
+    const phoneValue = sanitizeInput(formData.get('telefono'), 20);
+    const emailValue = sanitizeInput(formData.get('reply_to'), 100);
+    const serviceValue = sanitizeInput(formData.get('asunto'), 200);
+
+    if (!serviceValue) {
+      allErrors.asunto = t.serviceRequired || 'Selecciona un servicio';
+    }
+
+    if (!preferredDate) {
+      allErrors.preferred_date = t.dateRequired || 'Selecciona una fecha preferida';
+    }
+
+    if (!preferredBlock) {
+      allErrors.preferred_block = t.timeBlockRequired || 'Selecciona un bloque horario';
+    }
+
+    if (!phoneValue && !emailValue) {
+      const message = t.contactRequired || 'Indica teléfono o correo';
+      allErrors.telefono = message;
+      allErrors.reply_to = message;
+    }
+
+    if (phoneValue && !validators.phone(phoneValue)) {
+      allErrors.telefono = t.phoneError || 'Teléfono inválido (ej: +34612345678)';
+    }
+
+    if (emailValue && !validators.email(emailValue)) {
+      allErrors.reply_to = t.emailError || 'Email inválido';
+    }
 
     if (Object.keys(allErrors).length > 0) {
-      alert(t.validationError || 'Por favor corrige los errores en el formulario');
+      setErrors(allErrors);
       return;
     }
 
@@ -217,30 +263,58 @@ export default function FormularioReserva({ lang = 'es' }) {
         tutor: sanitizeInput(formData.get('tutor'), 100),
         telefono: sanitizeInput(formData.get('telefono'), 20),
         reply_to: sanitizeInput(formData.get('reply_to'), 100),
-        mensaje: sanitizeInput(formData.get('mensaje'), 1000)
+        mensaje: sanitizeInput(formData.get('mensaje'), 1000),
+        fecha_preferida: preferredDate,
+        bloque_preferido: preferredBlock
       };
 
-      // Crear nuevo FormData con datos sanitizados
-      const sanitizedForm = new FormData();
-      Object.entries(sanitizedData).forEach(([key, value]) => {
-        if (value) sanitizedForm.append(key, value);
+      const timeRange = parseTimeRange(preferredBlock);
+      const startDate = timeRange ? buildDateFromParts(preferredDate, timeRange.startRaw) : null;
+      const blockEndDate = timeRange ? buildDateFromParts(preferredDate, timeRange.endRaw) : null;
+      const suggestedEndDate = startDate ? new Date(startDate.getTime() + 60 * 60000) : null;
+      const endDate = (suggestedEndDate && blockEndDate && suggestedEndDate <= blockEndDate)
+        ? suggestedEndDate
+        : (blockEndDate || suggestedEndDate);
+
+      if (!startDate || !endDate) {
+        setErrors({
+          preferred_date: t.dateRequired || 'Selecciona una fecha preferida',
+          preferred_block: t.timeBlockRequired || 'Selecciona un bloque horario'
+        });
+        return;
+      }
+
+      const details = [
+        'Solicitud desde jetvets:',
+        `Servicio: ${sanitizedData.motivo_consulta_label || sanitizedData.asunto || '-'}`,
+        `Especie: ${sanitizedData.especie || '-'}`,
+        `Edad: ${sanitizedData.edad || '-'}`,
+        `Castrado: ${sanitizedData.castrado || '-'}`,
+        `Raza: ${sanitizedData.raza || '-'}`,
+        `Tutor: ${sanitizedData.tutor || '-'}`,
+        `Teléfono: ${sanitizedData.telefono || '-'}`,
+        `Correo: ${sanitizedData.reply_to || '-'}`,
+        `Mensaje: ${sanitizedData.mensaje || '-'}`,
+        `Fecha preferida: ${sanitizedData.fecha_preferida || '-'}`,
+        `Bloque horario preferido: ${sanitizedData.bloque_preferido || '-'}`
+      ].join('\n');
+
+      const calendarUrl = buildGoogleCalendarUrl({
+        title: 'Jet Vets - Solicitud de Cita',
+        start: formatDateToGoogleCalendar(startDate),
+        end: formatDateToGoogleCalendar(endDate),
+        details,
+        guests: inviteeEmail
       });
 
-      await emailjs.sendForm(
-        SERVICE_ID,
-        TEMPLATE_ID,
-        formRef.current,
-        { publicKey: PUBLIC_KEY }
-      );
-
-      formRef.current.reset();
-      setReasonValue('');
-      setOtherReason('');
+      window.open(calendarUrl, '_blank', 'noopener,noreferrer');
       setErrors({});
-      alert(t.sentOK || 'Solicitud enviada');
+      setSuccessMessage(
+        t.calendarSuccess ||
+          'Se abrió Google Calendar para crear la solicitud. Esta solicitud no confirma la cita. Nuestro equipo revisará la disponibilidad y confirmará por WhatsApp o correo.'
+      );
     } catch (err) {
-      console.error('EmailJS error', err);
-      alert(t.sentError || 'No se pudo enviar. Intenta nuevamente.');
+      console.error('Calendar error', err);
     } finally {
       setEnviando(false);
     }
@@ -343,12 +417,16 @@ export default function FormularioReserva({ lang = 'es' }) {
           <label className="block text-sm font-semibold mb-1">{t.reason}</label>
           <select
             name="asunto"
-            required
             className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
             value={reasonValue}
             onChange={(e) => {
               const v = e.target.value;
               setReasonValue(v);
+              setErrors((prev) => {
+                const next = { ...prev };
+                delete next.asunto;
+                return next;
+              });
               if (v !== 'other') setOtherReason('');
             }}
           >
@@ -361,6 +439,7 @@ export default function FormularioReserva({ lang = 'es' }) {
               </option>
             ))}
           </select>
+          {errors.asunto && <p className="text-red-500 text-xs mt-1">{errors.asunto}</p>}
 
           <input type="hidden" name="motivo_consulta_label" value={reasonLabel} />
 
@@ -379,6 +458,64 @@ export default function FormularioReserva({ lang = 'es' }) {
               />
             </div>
           )}
+        </div>
+
+        {/* Fecha y bloque horario */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-semibold mb-1">
+              {t.preferredDate || 'Fecha preferida'}
+            </label>
+            <input
+              type="date"
+              name="preferred_date"
+              onChange={() =>
+                setErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.preferred_date;
+                  return next;
+                })
+              }
+              className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
+            />
+            {errors.preferred_date && (
+              <p className="text-red-500 text-xs mt-1">{errors.preferred_date}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-semibold mb-1">
+              {t.preferredTimeBlock || 'Bloque horario preferido'}
+            </label>
+            <select
+              name="preferred_block"
+              defaultValue=""
+              onChange={() =>
+                setErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.preferred_block;
+                  return next;
+                })
+              }
+              className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
+            >
+              <option value="" disabled>
+                {t.timeBlockPlaceholder || 'Selecciona un bloque…'}
+              </option>
+              {(t.timeBlockOptions || [
+                '09:00 - 11:00',
+                '11:00 - 13:00',
+                '15:00 - 17:00',
+                '17:00 - 19:00'
+              ]).map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+            {errors.preferred_block && (
+              <p className="text-red-500 text-xs mt-1">{errors.preferred_block}</p>
+            )}
+          </div>
         </div>
 
         {/* Datos de contacto */}
@@ -406,12 +543,18 @@ export default function FormularioReserva({ lang = 'es' }) {
               name="telefono"
               autoComplete="tel"
               inputMode="tel"
-              required
               maxLength={20}
               pattern="^\+?[1-9]\d{8,14}$"
               placeholder="+34612345678"
               title={t.phoneTitle || 'Formato: +34612345678 (9-15 dígitos)'}
               onBlur={(e) => validateField('telefono', e.target.value)}
+              onChange={() =>
+                setErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.telefono;
+                  return next;
+                })
+              }
               className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
             />
             {errors.telefono && <p className="text-red-500 text-xs mt-1">{errors.telefono}</p>}
@@ -422,11 +565,17 @@ export default function FormularioReserva({ lang = 'es' }) {
               type="email"
               name="reply_to"
               autoComplete="email"
-              required
               maxLength={100}
               placeholder="correo@ejemplo.com"
               title={t.emailTitle || 'Email válido'}
               onBlur={(e) => validateField('reply_to', e.target.value)}
+              onChange={() =>
+                setErrors((prev) => {
+                  const next = { ...prev };
+                  delete next.reply_to;
+                  return next;
+                })
+              }
               className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
             />
             {errors.reply_to && <p className="text-red-500 text-xs mt-1">{errors.reply_to}</p>}
@@ -454,6 +603,13 @@ export default function FormularioReserva({ lang = 'es' }) {
         >
           {enviando ? (t.sending || 'Enviando…') : t.submit}
         </button>
+        <p className="text-xs text-gray-500 dark:text-gray-300">
+          {t.disclaimer ||
+            '*La solicitud de cita no constituye confirmación automática. Confirmaremos disponibilidad a la brevedad.*'}
+        </p>
+        {successMessage && (
+          <p className="text-sm text-green-600 dark:text-green-400">{successMessage}</p>
+        )}
       </form>
     </section>
   );
