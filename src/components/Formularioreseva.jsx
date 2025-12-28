@@ -1,7 +1,6 @@
 // src/components/FormularioReserva.jsx
 import { useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import emailjs from '@emailjs/browser';
 import { texts } from '../translations';
 
 // Utilidades de sanitización
@@ -92,21 +91,6 @@ const validators = {
   }
 };
 
-// Rate limiting simple (lado cliente)
-const canSubmitForm = (() => {
-  const COOLDOWN_MS = 60000; // 1 minuto entre envíos
-  let lastSubmit = 0;
-
-  return () => {
-    const now = Date.now();
-    if (now - lastSubmit < COOLDOWN_MS) {
-      return false;
-    }
-    lastSubmit = now;
-    return true;
-  };
-})();
-
 export default function FormularioReserva({ lang = 'es' }) {
   const t = texts[lang].form;
   const [searchParams] = useSearchParams();
@@ -118,9 +102,6 @@ export default function FormularioReserva({ lang = 'es' }) {
   const [successMessage, setSuccessMessage] = useState('');
 
   const inviteeEmail = import.meta.env.VITE_JETVETS_CALENDAR_INVITEE_EMAIL;
-  const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-  const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-  const PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
   // Honeypot mejorado con timestamp
   const [honeypotTime] = useState(Date.now());
@@ -218,17 +199,6 @@ export default function FormularioReserva({ lang = 'es' }) {
     e.preventDefault();
     setSuccessMessage('');
 
-    if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
-      alert('Error de configuración de EmailJS');
-      return;
-    }
-
-    // Rate limiting
-    if (!canSubmitForm()) {
-      alert(t.tooFastError || 'Por favor espera 1 minuto entre envíos');
-      return;
-    }
-
     // Verificar honeypot
     const formData = new FormData(formRef.current);
     const honeypotValue = formData.get('company');
@@ -246,11 +216,6 @@ export default function FormularioReserva({ lang = 'es' }) {
     const phoneValue = sanitizeInput(formData.get('telefono'), 20);
     const emailValue = sanitizeInput(formData.get('reply_to'), 100);
     const serviceValue = sanitizeInput(formData.get('asunto'), 200);
-    const tutorValue = sanitizeInput(formData.get('tutor'), 100);
-    const especieValue = sanitizeInput(formData.get('especie'), 100);
-    const edadValue = sanitizeInput(formData.get('edad'), 10);
-    const razaValue = sanitizeInput(formData.get('raza'), 100);
-    const mensajeValue = sanitizeInput(formData.get('mensaje'), 1000);
 
     if (!serviceValue) {
       allErrors.asunto = t.serviceRequired || 'Selecciona un servicio';
@@ -268,26 +233,6 @@ export default function FormularioReserva({ lang = 'es' }) {
       const message = t.contactRequired || 'Indica teléfono o correo';
       allErrors.telefono = message;
       allErrors.reply_to = message;
-    }
-
-    if (!tutorValue || !validators.text(tutorValue, 2, 100)) {
-      allErrors.tutor = t.textError || 'Debe tener entre 2 y 100 caracteres';
-    }
-
-    if (!especieValue || !validators.text(especieValue, 2, 100)) {
-      allErrors.especie = t.textError || 'Debe tener entre 2 y 100 caracteres';
-    }
-
-    if (!edadValue || !validators.age(edadValue)) {
-      allErrors.edad = t.ageError || 'Edad inválida (0-50)';
-    }
-
-    if (!razaValue || !validators.text(razaValue, 2, 100)) {
-      allErrors.raza = t.textError || 'Debe tener entre 2 y 100 caracteres';
-    }
-
-    if (!mensajeValue || !validators.text(mensajeValue, 10, 1000)) {
-      allErrors.mensaje = t.messageError || 'Debe tener entre 10 y 1000 caracteres';
     }
 
     if (phoneValue && !validators.phone(phoneValue)) {
@@ -362,30 +307,14 @@ export default function FormularioReserva({ lang = 'es' }) {
         guests: inviteeEmail
       });
 
-      const calendarInput = formRef.current.querySelector('input[name="calendar_url"]');
-      if (calendarInput) {
-        calendarInput.value = calendarUrl;
-      }
-
-      await emailjs.sendForm(
-        SERVICE_ID,
-        TEMPLATE_ID,
-        formRef.current,
-        { publicKey: PUBLIC_KEY }
-      );
-
+      window.open(calendarUrl, '_blank', 'noopener,noreferrer');
       setErrors({});
       setSuccessMessage(
-        t.receivedMessage ||
-          'Hemos recibido tu solicitud. Te contactaremos para confirmar disponibilidad.'
+        t.calendarSuccess ||
+          'Se abrió Google Calendar para crear la solicitud. Esta solicitud no confirma la cita. Nuestro equipo revisará la disponibilidad y confirmará por WhatsApp o correo.'
       );
-
-      formRef.current.reset();
-      setReasonValue('');
-      setOtherReason('');
     } catch (err) {
-      console.error('EmailJS error', err);
-      alert(t.sentError || 'No se pudo enviar. Intenta nuevamente.');
+      console.error('Calendar error', err);
     } finally {
       setEnviando(false);
     }
