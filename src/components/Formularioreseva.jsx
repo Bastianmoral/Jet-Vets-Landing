@@ -348,6 +348,7 @@ export default function FormularioReserva({ lang = 'es' }) {
           name="timestamp"
           value={honeypotTime}
         />
+        <input type="hidden" name="calendar_url" />
 
         {/* Fila 1: Especie / Edad */}
         <div className="grid grid-cols-2 gap-4">
@@ -521,16 +522,16 @@ export default function FormularioReserva({ lang = 'es' }) {
         {/* Datos de contacto */}
         <div>
           <label className="block text-sm font-semibold mb-1">{t.tutor}</label>
-          <input
-            type="text"
-            name="tutor"
-            required
-            maxLength={100}
-            pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]{2,100}$"
-            title={t.tutorTitle || 'Nombre completo (2-100 caracteres)'}
-            onBlur={(e) => validateField('tutor', e.target.value)}
-            className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
-          />
+            <input
+              type="text"
+              name="tutor"
+              required
+              maxLength={100}
+              pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]{2,100}$"
+              title={t.tutorTitle || 'Nombre completo (2-100 caracteres)'}
+              onBlur={(e) => validateField('tutor', e.target.value)}
+              className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
+            />
           {errors.tutor && <p className="text-red-500 text-xs mt-1">{errors.tutor}</p>}
         </div>
 
