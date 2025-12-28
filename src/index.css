@@ -71,6 +71,15 @@ button:focus-visible {
   }
 } */
 
+
+html { scroll-padding-top: 96px; }        /* mobile aprox */
+@media (min-width: 768px) {
+  html { scroll-padding-top: 70px; }      /* desktop */
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
 @layer utilities {
   @keyframes float {
     0% { transform: translateY(0); }

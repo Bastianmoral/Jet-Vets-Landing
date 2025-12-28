@@ -4,7 +4,7 @@ export const texts = {
       about: 'Sobre Nosotros',
       services: 'Servicios',
       book: 'Reserva tu cita',
-      space: 'Modo Espacial',
+      space: 'MODO CÓSMICO',
       light: 'Modo Claro'
     },
     hero: {
@@ -75,7 +75,7 @@ export const texts = {
       about: 'About Us',
       services: 'Services',
       book: 'Book your appointment',
-      space: 'Space Mode',
+      space: 'COSMIC MODE',
       light: 'Light Mode'
     },
     hero: {

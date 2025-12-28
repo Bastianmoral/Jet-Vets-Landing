@@ -6,10 +6,17 @@ import Servicios from '../components/Servicios';
 import FormularioReserva from '../components/Formularioreseva';
 /* import LandingRocket from '../components/LandingRocket'; */
 
-export default function Home({ spaceMode, toggleSpaceMode, lang, toggleLang }) {
+export default function Home({  spaceMode, toggleSpaceMode, lang, toggleLang, mobileMode }) {
   return (
     <>
-      <Header spaceMode={spaceMode} toggleSpaceMode={toggleSpaceMode} lang={lang} toggleLang={toggleLang} />
+    
+       <Header 
+        spaceMode={spaceMode}
+        toggleSpaceMode={toggleSpaceMode}
+        lang={lang}
+        toggleLang={toggleLang}
+        mobileMode={mobileMode}
+      />
       <Hero lang={lang} />
       <Servicios lang={lang} />
       <SobreNosotros lang={lang} />
