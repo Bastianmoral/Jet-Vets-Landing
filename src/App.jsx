@@ -2,6 +2,8 @@
 import { Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
 import Home from './pages/home';
+import ConfirmarCita from './pages/ConfirmarCita';
+import PropuestaFecha from './pages/PropuestaFecha';
 import StarBackground from './components/StarBackground';
 
 export default function App() {
@@ -28,15 +30,17 @@ export default function App() {
           <Route
             path="/jetvet"
             element={
-              <Home 
-                spaceMode={spaceMode} 
-                toggleSpaceMode={toggleSpaceMode} 
-                lang={lang} 
+              <Home
+                spaceMode={spaceMode}
+                toggleSpaceMode={toggleSpaceMode}
+                lang={lang}
                 toggleLang={toggleLang}
                 mobileMode={mobileMode}
               />
             }
           />
+          <Route path="/jetvet/confirmar" element={<ConfirmarCita />} />
+          <Route path="/jetvet/propuesta" element={<PropuestaFecha />} />
         </Routes>
       </div>
     </div>

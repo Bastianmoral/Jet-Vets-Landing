@@ -13,6 +13,8 @@ dist-ssr
 *.local
 .env
 
+# EmailJS templates (contienen configuracion sensible)
+emailjs-templates.html
 
 # Editor directories and files
 .vscode/*

@@ -1,7 +1,9 @@
 // src/components/FormularioReserva.jsx
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { texts } from '../translations';
+import { buildConfirmationUrl, buildProposalUrl } from '../utils/bookingEncoder';
+import { sendAppointmentRequest, initEmailJS } from '../utils/emailService';
 
 // Utilidades de sanitización
 const sanitizeInput = (value, maxLength = 200) => {
@@ -106,6 +108,11 @@ export default function FormularioReserva({ lang = 'es' }) {
   // Honeypot mejorado con timestamp
   const [honeypotTime] = useState(Date.now());
 
+  // Inicializar EmailJS
+  useEffect(() => {
+    initEmailJS();
+  }, []);
+
   const neuteredOptions = texts[lang].form.neuteredOptions;
   const reasonOptions   = texts[lang].form.reasonOptions;
 
@@ -145,6 +152,16 @@ export default function FormularioReserva({ lang = 'es' }) {
   );
 
   const reasonLabel = reasonValue ? (labelByValue.get(reasonValue) || reasonValue) : '';
+
+  // Estado para especie (Perro, Gato, Otro)
+  const [especieValue, setEspecieValue] = useState('');
+  const [otraEspecie, setOtraEspecie] = useState('');
+
+  const speciesOptions = texts[lang].form.speciesOptions || [
+    { value: 'perro', label: lang === 'es' ? 'Perro' : 'Dog' },
+    { value: 'gato', label: lang === 'es' ? 'Gato' : 'Cat' },
+    { value: 'otro', label: lang === 'es' ? 'Otro' : 'Other' }
+  ];
 
   // Validación en tiempo real
   const validateField = (name, value) => {
@@ -223,6 +240,14 @@ export default function FormularioReserva({ lang = 'es' }) {
 
     if (!preferredDate) {
       allErrors.preferred_date = t.dateRequired || 'Selecciona una fecha preferida';
+    } else {
+      // Validar que la fecha no sea en el pasado
+      const selectedDate = new Date(preferredDate + 'T00:00:00');
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (selectedDate < today) {
+        allErrors.preferred_date = t.datePastError || 'La fecha no puede ser en el pasado';
+      }
     }
 
     if (!preferredBlock) {
@@ -251,70 +276,46 @@ export default function FormularioReserva({ lang = 'es' }) {
     try {
       setEnviando(true);
 
-      // Sanitizar datos antes de enviar
-      const sanitizedData = {
+      // Preparar datos de la reserva
+      const bookingData = {
+        nombre_paciente: sanitizeInput(formData.get('nombre_paciente'), 100),
         especie: sanitizeInput(formData.get('especie'), 100),
         edad: sanitizeInput(formData.get('edad'), 10),
         castrado: sanitizeInput(formData.get('castrado'), 50),
         raza: sanitizeInput(formData.get('raza'), 100),
-        asunto: sanitizeInput(formData.get('asunto'), 200),
-        motivo_consulta_label: sanitizeInput(formData.get('motivo_consulta_label'), 200),
-        motivo_consulta_otro: sanitizeInput(formData.get('motivo_consulta_otro'), 500),
+        servicio: sanitizeInput(formData.get('motivo_consulta_label'), 200) || sanitizeInput(formData.get('asunto'), 200),
         tutor: sanitizeInput(formData.get('tutor'), 100),
         telefono: sanitizeInput(formData.get('telefono'), 20),
-        reply_to: sanitizeInput(formData.get('reply_to'), 100),
+        email: sanitizeInput(formData.get('reply_to'), 100),
         mensaje: sanitizeInput(formData.get('mensaje'), 1000),
-        fecha_preferida: preferredDate,
-        bloque_preferido: preferredBlock
+        fecha: preferredDate,
+        horario: preferredBlock,
+        createdAt: Date.now(),
       };
 
-      const timeRange = parseTimeRange(preferredBlock);
-      const startDate = timeRange ? buildDateFromParts(preferredDate, timeRange.startRaw) : null;
-      const blockEndDate = timeRange ? buildDateFromParts(preferredDate, timeRange.endRaw) : null;
-      const suggestedEndDate = startDate ? new Date(startDate.getTime() + 60 * 60000) : null;
-      const endDate = (suggestedEndDate && blockEndDate && suggestedEndDate <= blockEndDate)
-        ? suggestedEndDate
-        : (blockEndDate || suggestedEndDate);
+      // Generar URLs de accion para el veterinario
+      const baseUrl = import.meta.env.VITE_APP_BASE_URL || `${window.location.origin}/jetvet`;
+      bookingData.confirmUrl = buildConfirmationUrl(baseUrl, bookingData);
+      bookingData.propuestaUrl = buildProposalUrl(baseUrl, bookingData);
 
-      if (!startDate || !endDate) {
-        setErrors({
-          preferred_date: t.dateRequired || 'Selecciona una fecha preferida',
-          preferred_block: t.timeBlockRequired || 'Selecciona un bloque horario'
-        });
-        return;
-      }
+      // Enviar email al veterinario via EmailJS
+      await sendAppointmentRequest(bookingData);
 
-      const details = [
-        'Solicitud desde jetvets:',
-        `Servicio: ${sanitizedData.motivo_consulta_label || sanitizedData.asunto || '-'}`,
-        `Especie: ${sanitizedData.especie || '-'}`,
-        `Edad: ${sanitizedData.edad || '-'}`,
-        `Castrado: ${sanitizedData.castrado || '-'}`,
-        `Raza: ${sanitizedData.raza || '-'}`,
-        `Tutor: ${sanitizedData.tutor || '-'}`,
-        `Teléfono: ${sanitizedData.telefono || '-'}`,
-        `Correo: ${sanitizedData.reply_to || '-'}`,
-        `Mensaje: ${sanitizedData.mensaje || '-'}`,
-        `Fecha preferida: ${sanitizedData.fecha_preferida || '-'}`,
-        `Bloque horario preferido: ${sanitizedData.bloque_preferido || '-'}`
-      ].join('\n');
-
-      const calendarUrl = buildGoogleCalendarUrl({
-        title: 'Jet Vets - Solicitud de Cita',
-        start: formatDateToGoogleCalendar(startDate),
-        end: formatDateToGoogleCalendar(endDate),
-        details,
-        guests: inviteeEmail
-      });
-
-      window.open(calendarUrl, '_blank', 'noopener,noreferrer');
       setErrors({});
+      formRef.current?.reset();
+      setReasonValue('');
+      setOtherReason('');
+      setEspecieValue('');
+      setOtraEspecie('');
       setSuccessMessage(
-        t.calendarSuccess ||
-          'Se abrió Google Calendar para crear la solicitud. Esta solicitud no confirma la cita. Nuestro equipo revisará la disponibilidad y confirmará por WhatsApp o correo.'
+        t.requestSent ||
+          'Tu solicitud ha sido enviada. Te contactaremos pronto para confirmar la disponibilidad.'
       );
     } catch (err) {
-      console.error('Calendar error', err);
+      console.error('Error al enviar solicitud:', err);
+      setErrors({
+        submit: t.sendError || 'Error al enviar la solicitud. Por favor, intenta de nuevo.'
+      });
     } finally {
       setEnviando(false);
     }
@@ -350,21 +351,44 @@ export default function FormularioReserva({ lang = 'es' }) {
         />
         <input type="hidden" name="calendar_url" />
 
+        {/* Nombre del paciente (mascota) */}
+        <div>
+          <label className="block text-sm font-semibold mb-1">{t.petName || 'Nombre del paciente'}</label>
+          <input
+            type="text"
+            name="nombre_paciente"
+            required
+            maxLength={100}
+            pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]{2,100}$"
+            title={t.petNameTitle || 'Nombre de tu mascota'}
+            className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
+          />
+        </div>
+
         {/* Fila 1: Especie / Edad */}
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-semibold mb-1">{t.species}</label>
-            <input
-              type="text"
-              name="especie"
+            <select
+              name="especie_select"
               required
-              maxLength={100}
-              pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]{2,100}$"
-              title={t.speciesTitle || 'Solo letras (2-100 caracteres)'}
-              onBlur={(e) => validateField('especie', e.target.value)}
+              value={especieValue}
+              onChange={(e) => {
+                setEspecieValue(e.target.value);
+                if (e.target.value !== 'otro') setOtraEspecie('');
+              }}
               className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
+            >
+              <option value="" disabled>--</option>
+              {speciesOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            <input
+              type="hidden"
+              name="especie"
+              value={especieValue === 'otro' ? otraEspecie : (speciesOptions.find(o => o.value === especieValue)?.label || '')}
             />
-            {errors.especie && <p className="text-red-500 text-xs mt-1">{errors.especie}</p>}
           </div>
           <div>
             <label className="block text-sm font-semibold mb-1">{t.age}</label>
@@ -381,6 +405,24 @@ export default function FormularioReserva({ lang = 'es' }) {
             {errors.edad && <p className="text-red-500 text-xs mt-1">{errors.edad}</p>}
           </div>
         </div>
+
+        {/* Si especie es "otro", mostrar input adicional */}
+        {especieValue === 'otro' && (
+          <div>
+            <label className="block text-sm font-semibold mb-1">
+              {t.otherSpeciesLabel || 'Especifica la especie'}
+            </label>
+            <input
+              type="text"
+              value={otraEspecie}
+              onChange={(e) => setOtraEspecie(e.target.value)}
+              required
+              maxLength={100}
+              placeholder={t.otherSpeciesPlaceholder || 'Ej: Conejo, Hamster, Ave...'}
+              className="w-full border rounded px-3 py-2 dark:bg-neutral-700"
+            />
+          </div>
+        )}
 
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -470,6 +512,7 @@ export default function FormularioReserva({ lang = 'es' }) {
             <input
               type="date"
               name="preferred_date"
+              min={new Date().toISOString().split('T')[0]}
               onChange={() =>
                 setErrors((prev) => {
                   const next = { ...prev };
@@ -597,9 +640,13 @@ export default function FormularioReserva({ lang = 'es' }) {
           {errors.mensaje && <p className="text-red-500 text-xs mt-1">{errors.mensaje}</p>}
         </div>
 
+        {errors.submit && (
+          <p className="text-red-500 text-sm text-center">{errors.submit}</p>
+        )}
+
         <button
           type="submit"
-          disabled={enviando || Object.keys(errors).length > 0}
+          disabled={enviando || Object.keys(errors).filter(k => k !== 'submit').length > 0}
           className="bg-primary text-white px-6 py-2 rounded hover:bg-[#5c7c4d] disabled:opacity-60 disabled:cursor-not-allowed w-full"
         >
           {enviando ? (t.sending || 'Enviando…') : t.submit}

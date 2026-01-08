@@ -36,11 +36,20 @@ export const texts = {
     },
     form: {
       title: 'RESERVA TU CITA',
+      petName: 'Nombre del paciente',
+      petNameTitle: 'Nombre de tu mascota',
       species: 'Especie',
+      speciesOptions: [
+        { value: 'perro', label: 'Perro' },
+        { value: 'gato', label: 'Gato' },
+        { value: 'otro', label: 'Otro' }
+      ],
+      otherSpeciesLabel: 'Especifica la especie',
+      otherSpeciesPlaceholder: 'Ej: Conejo, Hamster, Ave...',
       age: 'Edad',
       neutered: 'Castrado',
       neuteredOptions: [
-        { value: 'yes', label: 'Sí' },
+        { value: 'yes', label: 'Si' },
         { value: 'no', label: 'No' }
       ],
       breed: 'Raza',
@@ -76,8 +85,11 @@ export const texts = {
       submit: 'Reservar Cita',
       disclaimer: '*La solicitud de cita no constituye confirmación automática. Confirmaremos disponibilidad a la brevedad.*',
       calendarSuccess: 'Se abrió Google Calendar para crear la solicitud. Esta solicitud no confirma la cita. Nuestro equipo revisará la disponibilidad y confirmará por WhatsApp o correo.',
+      requestSent: 'Tu solicitud ha sido enviada. Te contactaremos pronto para confirmar la disponibilidad.',
+      sendError: 'Error al enviar la solicitud. Por favor, intenta de nuevo.',
       serviceRequired: 'Selecciona un servicio',
       dateRequired: 'Selecciona una fecha preferida',
+      datePastError: 'La fecha no puede ser en el pasado',
       timeBlockRequired: 'Selecciona un bloque horario',
       contactRequired: 'Indica teléfono o correo'
     },
@@ -122,7 +134,16 @@ export const texts = {
     },
     form: {
       title: 'BOOK YOUR APPOINTMENT',
+      petName: 'Pet name',
+      petNameTitle: 'Your pet\'s name',
       species: 'Species',
+      speciesOptions: [
+        { value: 'perro', label: 'Dog' },
+        { value: 'gato', label: 'Cat' },
+        { value: 'otro', label: 'Other' }
+      ],
+      otherSpeciesLabel: 'Specify the species',
+      otherSpeciesPlaceholder: 'E.g.: Rabbit, Hamster, Bird...',
       age: 'Age',
       neutered: 'Neutered',
       neuteredOptions: [
@@ -162,8 +183,11 @@ export const texts = {
       submit: 'Book Appointment',
       disclaimer: '*Appointment requests do not confirm a booking automatically. We will confirm availability shortly.*',
       calendarSuccess: 'Google Calendar opened to create the request. This request does not confirm the appointment. Our team will check availability and confirm via WhatsApp or email.',
+      requestSent: 'Your request has been sent. We will contact you soon to confirm availability.',
+      sendError: 'Error sending the request. Please try again.',
       serviceRequired: 'Select a service',
       dateRequired: 'Select a preferred date',
+      datePastError: 'The date cannot be in the past',
       timeBlockRequired: 'Select a time block',
       contactRequired: 'Provide a phone number or email'
     },
